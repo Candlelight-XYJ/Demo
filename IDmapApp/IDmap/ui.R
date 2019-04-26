@@ -25,18 +25,27 @@ sidebar <- dashboardSidebar(
   disable = TRUE
 )
 
-## body - about
+## body - Home
 
-about <- tabPanel(
-  "About",
-  sidebarPanel(
+home <- tabPanel(
+  "Home",
+  column(sidebarPanel(
   selectizeInput("selectSpe", "Select Species", choices=c("human","mouse","rat"), selected = NULL, multiple = FALSE,
-                   options = NULL)
-  
+                   options = NULL),
+  selectizeInput("selectType", "Select type", choices=c("protein coding","non-coding"), selected = NULL, multiple = FALSE,
+                 options = NULL),
+  selectizeInput('selectGPL', 
+                 label = "Please input geo platform number(GPL)", 
+                 choices = NULL,# width = 275,
+                 options = list(placeholder = "eg: GPL520#",
+                                maxOptions = 300)),
+  actionButton("searchGPL","Search",icon("search"),
+               style="color: #fff; background-color: #18bc9c; border-color: #18bc9c"),
+  width = 12,status = "success"
 
-  ),
+  ),width = 4),
   mainPanel(
-     
+    DT::dataTableOutput("mytable") 
   )
 ) 
 
@@ -57,7 +66,7 @@ pipeline <- tabPanel(
   
   ),
   mainPanel(
-    DT::dataTableOutput("mytable") 
+    #DT::dataTableOutput("mytable") 
      
   )
 )
@@ -79,7 +88,7 @@ body <- dashboardBody(
 fluidRow(
   tabBox(
     id = "tabset1", height = "800px",width = 12,
-    about,
+    home,
     pipeline,
     DEG
     )
