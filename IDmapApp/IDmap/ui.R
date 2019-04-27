@@ -4,7 +4,7 @@ library(shinydashboard)
 library(shinyFiles)
 library(DT)
 library(shinythemes)
-
+library(knitr)
 ## head 
 headerbar <- dashboardHeader(
   title = "IDmap Workflow",
@@ -29,21 +29,21 @@ sidebar <- dashboardSidebar(
 
 home <- tabPanel(
   "Home",
-  column(sidebarPanel(
+  sidebarPanel(
   selectizeInput("selectSpe", "Select Species", choices=c("human","mouse","rat"), selected = NULL, multiple = FALSE,
                    options = NULL),
   selectizeInput("selectType", "Select type", choices=c("protein coding","non-coding"), selected = NULL, multiple = FALSE,
                  options = NULL),
-  selectizeInput('selectGPL', 
+  selectizeInput("selectGPL", 
                  label = "Please input geo platform number(GPL)", 
-                 choices = NULL,# width = 275,
-                 options = list(placeholder = "eg: GPL520#",
+                 choices = NULL ,
+                 multiple = TRUE ,
+                 options = list(placeholder = "eg: GPL570",
                                 maxOptions = 300)),
   actionButton("searchGPL","Search",icon("search"),
-               style="color: #fff; background-color: #18bc9c; border-color: #18bc9c"),
-  width = 12,status = "success"
+               style="color: #fff; background-color: #104E8B; border-color: #1874CD")
 
-  ),width = 4),
+  ),
   mainPanel(
     DT::dataTableOutput("mytable") 
   )
