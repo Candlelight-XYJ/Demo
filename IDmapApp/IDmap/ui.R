@@ -28,7 +28,7 @@ sidebar <- dashboardSidebar(
 ## body - Home
 
 home <- tabPanel(
-  "Home",
+  "Home",icon = icon("home"),
   sidebarPanel(
   selectizeInput("selectSpe", "Select Species", choices=c("human","mouse","rat"), selected = NULL, multiple = FALSE,
                    options = NULL),
@@ -73,24 +73,26 @@ pipeline <- tabPanel(
 
 ## body - DEG
 DEG <- tabPanel(
-  "DEG"
+  "DEG",icon = icon("bar-chart-o")
      )
 
 
-## body - More
+## body - Help&About Us
 
-
+about <- tabPanel(
+  "Help & About Us",icon = icon("table")
+)
 
 
 ##
 body <- dashboardBody(
-
 fluidRow(
   tabBox(
     id = "tabset1", height = "800px",width = 12,
     home,
     pipeline,
-    DEG
+    DEG,
+    about
     )
 ))
 
@@ -100,6 +102,6 @@ shinyUI(
     skin = "blue",
     headerbar,
     sidebar,
-    body
+    body,
   )
 )

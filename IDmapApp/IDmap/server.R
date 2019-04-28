@@ -144,11 +144,23 @@ shinyServer(function(input, output, session) {
 #####################
 ## do search MySQL ##
 #####################   
+observeEvent(input$searchGPL,{
+  
+  
+  
+  
+  
+})
     
+    
+        
     
 ####################
 ## select gpl acc ##
 ####################
+updateSelectizeInput(session, 'foo', choices = data, server = TRUE)
+    
+    
     
     
     
