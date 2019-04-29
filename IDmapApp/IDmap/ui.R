@@ -32,14 +32,14 @@ home <- tabPanel(
   sidebarPanel(
   selectizeInput("selectSpe", "Select Species", choices=c("human","mouse","rat"), selected = NULL, multiple = FALSE,
                    options = NULL),
-  selectizeInput("selectType", "Select type", choices=c("protein coding","non-coding"), selected = NULL, multiple = FALSE,
+  selectizeInput("selectType", "Select type", choices=c("protein-coding" = "protein" , "non-coding" = "nonc"), selected = NULL, multiple = FALSE,
                  options = NULL),
   selectizeInput("selectGPL", 
                  label = "Please input geo platform number(GPL)", 
                  choices = NULL ,
-                 multiple = TRUE ,
+                 multiple = FALSE,
                  options = list(placeholder = "eg: GPL570",
-                                maxOptions = 300)),
+                                maxOptions = 10)),
   actionButton("searchGPL","Search",icon("search"),
                style="color: #fff; background-color: #104E8B; border-color: #1874CD")
 

@@ -146,10 +146,10 @@ shinyServer(function(input, output, session) {
 ## do search MySQL ##
 #####################   
 observeEvent(input$searchGPL,{
-  
-  
-  
-  
+  querySQL <- paste0("select * from ",input$selectSpe,"_All_anno"," where gpl = ",shQuote(input$selectGPL),
+                     " and ","biotype = ",shQuote(input$selectType))
+  #print(querySQL)
+  queryDat <- getMySQLdata(querySQL)
   
 })
     

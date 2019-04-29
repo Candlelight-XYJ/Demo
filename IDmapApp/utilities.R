@@ -34,3 +34,31 @@ datasets
 write.csv(allRes,"E:\\学习资料存放处\\IDmap\\mySQL_table\\lncRNA_human_AllData.csv",row.names=F)
 
 
+##### 仅按物种分类，将公司加在后面
+rm(list=ls())
+setwd("E:\\学习资料存放处\\IDmap\\mySQL_table\\整理表格_仅按物种分类\\")
+
+allfiles <- list.files(getwd())
+options(stringsAsFactors = F)
+affy <- read.csv("affy_rat_AllData.csv")
+illumina <- read.csv("illumina_rat_AllData.csv")
+agilent <- read.csv("agilent_rat_AllData.csv")
+lncRNA <- read.csv("lncRNA_rat_AllData.csv")
+
+
+## add company
+affy$company <- rep("affymetrix",times=nrow(affy))
+illumina$company <- rep("illumina",times=nrow(illumina))
+agilent$company <- rep("agilent",times=nrow(agilent))
+lncRNA$company <- rep("lncRNA",times=nrow(lncRNA))
+
+
+## bind all files
+tmpRes <- rbind(affy,illumina)
+tmpRes2 <- rbind(agilent,lncRNA)
+allXres <- rbind(tmpRes,tmpRes2)
+
+write.csv(allXres,"rat_All_anno.csv")
+
+
+
