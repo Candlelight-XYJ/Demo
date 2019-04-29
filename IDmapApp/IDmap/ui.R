@@ -62,7 +62,11 @@ pipeline <- tabPanel(
   shinyFilesButton("genome", "Choose a Genome file" ,
                    title = "Please select a file:", multiple = FALSE,
                    buttonType = "default", class = NULL),
-  textOutput("showGenomePath")
+  textOutput("showGenomePath"),
+  br(),
+  actionButton("doAnnotate","Start Annotating",icon("play"),
+               style="color: #fff; background-color: #104E8B; border-color: #1874CD")
+  
   
   ),
   mainPanel(
@@ -81,6 +85,7 @@ DEG <- tabPanel(
 
 about <- tabPanel(
   "Help & About Us",icon = icon("table")
+  # ,includeMarkdown("help.Rmarkdown") 
 )
 
 

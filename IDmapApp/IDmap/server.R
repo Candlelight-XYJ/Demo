@@ -13,6 +13,7 @@ library(refGenome)
 library(GenomicRanges)
 library(tidyverse)
 library(Sushi)
+library(openxlsx)
 # library(IDmap)
 
 
@@ -158,7 +159,14 @@ observeEvent(input$searchGPL,{
 ####################
 ## select gpl acc ##
 ####################
-updateSelectizeInput(session, 'foo', choices = data, server = TRUE)
+gplname = read.xlsx("data\\gpl_list.xlsx")
+updateSelectizeInput(session, 'selectGPL', choices = as.vector(gplname$gpl),
+                     options = list(render = I(
+                       "{
+                       option: function(item, escape) {
+                        return '<div> <strong>' + item.label + '</div>';
+                       }}")),
+                     server = TRUE)
     
     
     
