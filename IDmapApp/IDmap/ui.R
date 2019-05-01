@@ -45,7 +45,7 @@ home <- tabPanel(
 
   ),
   mainPanel(
-    DT::dataTableOutput("mytable") 
+    DT::dataTableOutput("searchTable") 
   )
 ) 
 

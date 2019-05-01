@@ -20,6 +20,9 @@ library(openxlsx)
 ## Limit the size of load data in 50M
 options(shiny.maxRequestSize = 50 * 1024^2)
 
+
+
+
 ##############################
 #### Load files from path #### 
 ##############################
@@ -27,10 +30,12 @@ options(shiny.maxRequestSize = 50 * 1024^2)
 ## Load GPL list
 shinyServer(function(input, output, session) {
     
-    output$mytable = DT::renderDataTable({
-        return(mtcars)
-    })
+  ## setting reactive valuses for accessing data
+  setValues <- reactiveValues(
+    searchRes=NULL
     
+  )
+  
     volumes = getVolumes()
     
     ## Load users` fasta files
@@ -130,6 +135,10 @@ shinyServer(function(input, output, session) {
         
     })
     
+    output$searchTable = DT::renderDataTable({
+      return(head(setValues$searchRes))
+    })
+    
     
 ######################
 ## download buttons ##
@@ -144,12 +153,17 @@ shinyServer(function(input, output, session) {
     
 #####################
 ## do search MySQL ##
-#####################   
+#####################  
+
+            
+    
 observeEvent(input$searchGPL,{
+  
+  #querySQL="select * from"
   querySQL <- paste0("select * from ",input$selectSpe,"_All_anno"," where gpl = ",shQuote(input$selectGPL),
                      " and ","biotype = ",shQuote(input$selectType))
   #print(querySQL)
-  queryDat <- getMySQLdata(querySQL)
+  setValues$searchRes <- getMySQLdata(querySQL)
   
 })
     
@@ -167,11 +181,7 @@ updateSelectizeInput(session, 'selectGPL', choices = as.vector(gplname$gpl),
                         return '<div> <strong>' + item.label + '</div>';
                        }}")),
                      server = TRUE)
-    
-    
-    
-    
-    
+  
 })
 
 

@@ -3,13 +3,16 @@
 getMySQLdata <- function(querySQL){
   host <<- "127.0.0.1"
   port <<- 3306
-  user <<- "idmap_workflow"
-  password <<-  'idmap123'
+  user <<- "idmapuser"
+  password <<-  "idmap123"
+  dbname <<- "idmapDB"
   library(RMySQL)
-  db <- dbConnect(RMySQL::MySQL(), host=host, port=port, user=user, password=password)
+  db <- dbConnect(RMySQL::MySQL(), host=host,dbname=dbname,port=port, user=user, password=password)
+  #querySQL="select * from human_All_anno where gpl = \"GPL1352\" and biotype = \"protein\""
   dat=dbGetQuery(db,querySQL)
   dbDisconnect(db)
-  return(dat)
+  return(head(dat))
+  #return(querySQL)
 }
   
   
