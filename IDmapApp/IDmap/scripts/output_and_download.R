@@ -20,12 +20,35 @@ output$annotable <- DT::renderDataTable({
 })
 
 output$progressBox <- renderInfoBox({
- 
-  infoBox(
-    "Progress", paste0(react_Values$progress*100,"%"),icon = icon("list"),
-    color = react_Values$progressColor
-    )
   
+  if(input$doAnnotate == 0) {
+    infoBox("Status",
+      "Annotate Not Started Yet!",icon = icon("flag", lib = "glyphicon"),
+      color = "aqua",
+      fill = TRUE) 
+  }
+  else if(input$doAnnotate > 0 & is.null(react_Values$annoRes) 
+          | is.null(input$probeseq) 
+          | is.null(input$gtf) 
+          | is.null(input$genome)){
+    infoBox("Status",
+            "Annotate Not Started Yet!",icon = icon("flag", lib = "glyphicon"),
+            color = "aqua",
+            fill = TRUE)
+    
+  }
+  else if(input$doAnnotate > 0 & is.null(react_Values$annoRes) & !is.null(input$probeseq) & !is.null(input$gtf) & !is.null(input$genome)){
+    infoBox("Status",
+            "Annotating ... please wait!",icon = icon("flag", lib = "glyphicon"),
+            color = "red",
+            fill = TRUE)
+  }
+  else if(input$doAnnotate > 0 & !is.null(react_Values$annoRes)){
+    infoBox("Status",
+            "Done!",icon = icon("thumbs-up", lib = "glyphicon"),
+            color = "green",
+            fill = TRUE) 
+  }
 })
 
 ######################
