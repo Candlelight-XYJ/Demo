@@ -15,9 +15,18 @@ output$searchTable <- renderText({
 })
 
 output$annotable <- DT::renderDataTable({
+  
   return(react_Values$annoRes)
 })
 
+output$progressBox <- renderInfoBox({
+ 
+  infoBox(
+    "Progress", paste0(react_Values$progress*100,"%"),icon = icon("list"),
+    color = react_Values$progressColor
+    )
+  
+})
 
 ######################
 ## download buttons ##

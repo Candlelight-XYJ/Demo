@@ -45,8 +45,22 @@ home <- tabPanel(
 
   ),
   mainPanel(
-    #DT::dataTableOutput("searchTable") 
-    textOutput("searchTable")
+    fluidRow(
+      box(
+        title = strong("Species"),width = 4,solidHeader = TRUE,status = "primary" , ##status is color
+        "Now,we have stored human, mouse, rat probe annotations"
+      ),
+      valueBox(
+        "163",icon = icon("list"),color="light-blue",
+        strong("GPL annotaions")
+      )
+    ),
+    
+    fluidRow(
+      #DT::dataTableOutput("searchTable") 
+      textOutput("searchTable")
+    )
+    
   )
 ) 
 
@@ -71,8 +85,14 @@ pipeline <- tabPanel(
   
   ),
   mainPanel(
+    fluidRow(
+      infoBoxOutput("progressBox")
+      # Clicking this will increment the progress amount
+      #box(width = 4, actionButton("count", "Increment progress"))
+    ),
+    fluidRow(
     DT::dataTableOutput("annotable") 
-     
+    )
   )
 )
 
