@@ -1,4 +1,3 @@
-
 library(shiny)
 library(shinydashboard)
 library(shinyFiles)
@@ -26,7 +25,6 @@ sidebar <- dashboardSidebar(
 )
 
 ## body - Home
-
 home <- tabPanel(
   "Home",icon = icon("home"),
   sidebarPanel(
@@ -67,7 +65,7 @@ home <- tabPanel(
 
 ## body - pipeline
 pipeline <- tabPanel(
-  "Pipline", icon = icon("home"),
+  "Pipeline", icon = icon("home"),
   sidebarPanel(
     fileInput("probeseq", "Choose FASTA File",
               accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
@@ -81,8 +79,6 @@ pipeline <- tabPanel(
   br(),
   actionButton("doAnnotate","Start Annotating",icon("play"),
                style="color: #fff; background-color: #104E8B; border-color: #1874CD")
-  
-  
   ),
   mainPanel(
     fluidRow(
@@ -112,6 +108,9 @@ about <- tabPanel(
 
 ##
 body <- dashboardBody(
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
+  ),
 fluidRow(
   tabBox(
     id = "tabset1", height = "800px",width = 12,

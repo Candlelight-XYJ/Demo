@@ -27,9 +27,7 @@ react_Values <- reactiveValues(
     annoRes=NULL,
     bowtieIndex=NULL,
     samFile=NULL,
-    gtf2GR=NULL,
-    progress=NULL,
-    progressColor="light-blue"
+    gtf2GR=NULL
 )
 volumes = getVolumes()
 
