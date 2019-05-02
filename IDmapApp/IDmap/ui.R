@@ -45,7 +45,8 @@ home <- tabPanel(
 
   ),
   mainPanel(
-    DT::dataTableOutput("searchTable") 
+    #DT::dataTableOutput("searchTable") 
+    textOutput("searchTable")
   )
 ) 
 
@@ -70,7 +71,7 @@ pipeline <- tabPanel(
   
   ),
   mainPanel(
-    #DT::dataTableOutput("mytable") 
+    DT::dataTableOutput("annotable") 
      
   )
 )
@@ -107,6 +108,6 @@ shinyUI(
     skin = "blue",
     headerbar,
     sidebar,
-    body,
+    body
   )
 )
