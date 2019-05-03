@@ -6,15 +6,25 @@ getMySQLdata <- function(querySQL){
   user <<- "idmapuser"
   password <<-  "idmap123"
   dbname <<- "idmapDB"
-  #library(RMySQL)
-  #db <- dbConnect(RMySQL::MySQL(), host=host,dbname=dbname,port=port, user=user, password=password)
+  library(RMySQL)
+  db <- dbConnect(RMySQL::MySQL(), host=host,dbname=dbname,port=port, user=user, password=password)
   #querySQL="select * from human_All_anno where gpl = \"GPL1352\" and biotype = \"protein\""
-  #dat=dbGetQuery(db,querySQL)
-  #dbDisconnect(db)
-  #return(head(dat))
-  return(paste0(querySQL,"待部署_shiny-server"))
+  dat=dbGetQuery(db,querySQL)
+  dbDisconnect(db)
+  return(head(dat))
+  #return(paste0(querySQL))
 }
   
   
-  
-  
+## install packages
+#BiocManager::install(c("shinydashboard","shinyFiles","DT",
+#                       "Rbowtie",
+#                       "data.table",
+#                       "Rsamtools",
+#                       "refGenome",
+#                       "GenomicRanges",
+#                       "tidyverse",
+#                       "Sushi",
+#                       "openxlsx"))
+options(shiny.sanitize.errors = FALSE)
+

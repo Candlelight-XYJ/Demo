@@ -55,10 +55,21 @@ output$progressBox <- renderInfoBox({
 ## download buttons ##
 ###################### 
 
-output$downloadAnnotate <- downloadHandler(filename = "probeAnnotations.csv", content = function(file) {
-  write.csv(getAnnotation(), file, row.names = F)
+output$downloadAnno <- downloadHandler(
+  filename = "probeAnnotations.csv", 
+  content = function(file) {
+    write.csv(react_Values$annoRes, file, row.names = F)
 })
 
-output$Annotation <- renderText(head(nrow(getAnnotation())))
 
+output$downloadGPL <- downloadHandler(
+  filename = function() {
+    paste(input$selectGPL,
+          'anno', Sys.Date(), '.csv', sep='-')
+  },
+  content = function(file) {
+    res=react_Valuse$searchRes
+    write.csv(res, file)
+  }
+) 
 

@@ -39,8 +39,10 @@ home <- tabPanel(
                  options = list(placeholder = "eg: GPL570",
                                 maxOptions = 10)),
   actionButton("searchGPL","Search",icon("search"),
-               style="color: #fff; background-color: #104E8B; border-color: #1874CD")
-
+               style="color: #fff; background-color: #104E8B; border-color: #1874CD"),
+  br(),
+  br(),
+  downloadButton("downloadGPL", "Download",icon("download"))
   ),
   mainPanel(
     fluidRow(
@@ -50,7 +52,7 @@ home <- tabPanel(
       ),
       valueBox(
         "163",icon = icon("list"),color="light-blue",
-        strong("GPL annotaions")
+        strong("GPL annotations")
       )
     ),
     
@@ -78,7 +80,10 @@ pipeline <- tabPanel(
   textOutput("showGenomePath"),
   br(),
   actionButton("doAnnotate","Start Annotating",icon("play"),
-               style="color: #fff; background-color: #104E8B; border-color: #1874CD")
+               style="color: #fff; background-color: #104E8B; border-color: #1874CD"),
+  br(),
+  br(),
+  downloadButton("downloadAnno", "Download",icon("download"))
   ),
   mainPanel(
     fluidRow(

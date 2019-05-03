@@ -9,10 +9,10 @@ library(DT)
 library(Rbowtie)
 library(data.table)
 library(Rsamtools)
-library(refGenome)
+#library(refGenome)
 library(GenomicRanges)
-library(tidyverse)
-library(Sushi)
+#library(tidyverse)
+#library(Sushi)
 library(openxlsx)
 # library(IDmap)
 
@@ -78,11 +78,7 @@ source('scripts/output_and_download.R', local = TRUE)
 ## download buttons ##
 ###################### 
     
-    output$downloadAnnotate <- downloadHandler(filename = "probeAnnotations.csv", content = function(file) {
-        write.csv(getAnnotation(), file, row.names = F)
-    })
-    
-    output$Annotation <- renderText(head(nrow(getAnnotation())))
+
     
 ####################
 ## select gpl acc ##
