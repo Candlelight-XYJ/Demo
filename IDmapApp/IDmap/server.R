@@ -11,7 +11,7 @@ library(data.table)
 library(Rsamtools)
 #library(refGenome)
 library(GenomicRanges)
-#library(tidyverse)
+library(tidyverse)
 #library(Sushi)
 library(openxlsx)
 # library(IDmap)
@@ -83,7 +83,7 @@ source('scripts/output_and_download.R', local = TRUE)
 ####################
 ## select gpl acc ##
 ####################
-gplname = read.xlsx("data\\gpl_list.xlsx")
+gplname = read.xlsx("data/gpl_list.xlsx")
 updateSelectizeInput(session, 'selectGPL', choices = as.vector(gplname$gpl),
                      options = list(render = I(
                        "{

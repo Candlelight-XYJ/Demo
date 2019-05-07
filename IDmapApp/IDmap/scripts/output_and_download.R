@@ -8,9 +8,9 @@ output$viewBed <- renderPlot({
 })
 
 #output$searchTable = DT::renderDataTable({
-#  return(head(reactValues$searchRes))
+#  return(head(react_Values$searchRes))
 #})
-output$searchTable <- renderText({
+output$searchTable <- DT::renderDataTable({
   return(react_Values$searchRes)
 })
 

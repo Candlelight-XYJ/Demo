@@ -47,7 +47,7 @@ home <- tabPanel(
   mainPanel(
     fluidRow(
       box(
-        title = strong("Species"),width = 4,solidHeader = TRUE,status = "primary" , ##status is color
+        title = strong("3 Species"),width = 4,solidHeader = TRUE,status = "primary" , ##status is color
         "Now,we have stored human, mouse, rat probe annotations"
       ),
       valueBox(
@@ -57,8 +57,8 @@ home <- tabPanel(
     ),
     
     fluidRow(
-      #DT::dataTableOutput("searchTable") 
-      textOutput("searchTable")
+      DT::dataTableOutput("searchTable") 
+      #textOutput("searchTable")
     )
     
   )
