@@ -39,7 +39,7 @@ agilent_mouse_anno <- list()
 agilent_rat_anno <- list()
 
 ## 1.设置本次注释的目录，
-setwd("E:\\学习资料存放处\\IDmap\\注释存放处\\5_所有自主注释存放处\\human_GPL\\agilent\\")
+setwd("E:\\学习资料存放处\\IDmap\\注释存放处\\5_所有自主注释存放处\\rat_GPL\\agilent\\")
 allfiles=list.files(getwd())
 
 ## 2.读入注释
@@ -68,8 +68,9 @@ for(i in 1:length(allfiles)){
   }
   
   # 读入soft注释
-  softfile <- read.csv(paste0("E:\\学习资料存放处\\IDmap\\注释存放处\\4_soft原始注释Anno存放处\\humanAgilent\\"
+  softfile <- read.csv(paste0("E:\\学习资料存放处\\IDmap\\注释存放处\\4_soft原始注释Anno存放处\\ratAgilent\\"
                               ,gplnum,"_probe_anno.csv"))
+  softfile[softfile==""]<-NA
   ## merge pipeAnno and softAnno
   aname <- colnames(softfile)
   # judge the colname
@@ -103,6 +104,9 @@ for(i in 1:length(allfiles)){
   }
   if("SYMBOL" %in% aname){
     gene_symbol = softfile$SYMBOL
+  }
+  if("GeneName" %in% aname){
+    gene_symbol = softfile$GeneName
   }
   
   ## 判断soft的哪列与pipeAnno的探针id匹配
@@ -144,9 +148,9 @@ for(i in 1:length(allfiles)){
   
   judge_biocpac <- function(gplnum,gpllist,gpl){
     flag = 1
-    tmp <- eval(parse(text = "gpllist[which(gpllist$gpl == gplnum),7]"))
-    #print(tmp)
-    if(nchar(tmp) == 0) {
+    tmpbioc <- eval(parse(text = "gpllist[which(gpllist$gpl == gplnum),7]"))
+    #print(tmpbioc)
+    if(nchar(tmpbioc) == 0) {
       flag =0}
     return(flag)
   }
@@ -156,7 +160,7 @@ for(i in 1:length(allfiles)){
   if(judge_biocpac(gplnum,gpllist,gpl)){
     
     # biocAnno <- human_dat[which(human_dat$gpl == gplnum),]  
-    biocAnno <-human_dat[grep(gplnum,rat_dat$gpl),]
+    biocAnno <-rat_dat[grep(gplnum,rat_dat$gpl),]
     # biocAnno <- mouse_add_gpl[which(mouse_add_gpl$gpl == gplnum),] 
     # biocAnno <- rat_add_gpl[which(rat_add_gpl$gpl == gplnum),] 
     
@@ -199,9 +203,10 @@ for(i in 1:length(allfiles)){
                          ensembl_id=tmpdf$ensembl_id,biotype=tmpdf$biotype
                          )
   }
-  eval(parse(text=paste0("agilent_human_anno$",gplnum," <- res_df ")))
+  eval(parse(text=paste0("agilent_rat_anno$",gplnum," <- res_df ")))
  
 }
+save(agilent_rat_anno,file = "E:\\学习资料存放处\\IDmap\\注释存放处\\agilent_rat.Rdata")
 
 
 
