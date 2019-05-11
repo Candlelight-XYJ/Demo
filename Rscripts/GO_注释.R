@@ -37,7 +37,7 @@ for(i in 1:nrow(allres)){
 write.csv(resAddKO,"diffAddKO_C12h_vs_RTF.csv")
 
 ## diff anno
-diffgenes <- read.csv("E:\\IOZ_lab\\yangby\\10C12h_vs_RTF_all_diff.csv")
+diffgen <- read.csv("E:\\IOZ_lab\\yangby\\10C12h_vs_RTF_all_diff.csv")
 #xres <- merge(diffgenes,resAddGO,by.x = "Row.names",by.y="Row.names",all.x = T)
 xres <- merge(allres,koAnno,by.x = "symbol",by.y = "symbol",all.x = T)
 xxres <- merge(xres,koAnno,by.x = "symbol",by.y = "description",all.x = T)
@@ -45,13 +45,29 @@ koXres <- xxres[!duplicated(xxres),]
 koXres1 <- koXres
 koXres2 <- koXres
 
-unionKO <- outer_join()
+#unionKO <- dplyr::full_join(koXres1,koXres2,by=c("KO.x"="KO.y"))
+#write.csv(koXres,"allDeseq_AddKO_C12h_vs_RTF.csv")
 
-
-write.csv(koXres,"allDeseq_AddKO_C12h_vs_RTF.csv")
-
-
+res <- merge(diffgen,koAnno,by.x = "gene_symbol",by.y = "symbol",all.x = T)
+kres <- merge(res,koAnno,by.x = "gene_symbol",by.y = "description",all.x = T)
+koXres <- kres[!duplicated(kres),]
+write.csv(koXres,"diffAddKO_C12h_vs_RTF.csv")
 ## 
 
 
+## 两列合并成一列
+z<- read.csv("E:\\IOZ_lab\\yangby\\添加KO注释\\AddKO_diff_10C12h_vs_RTF.csv")
+KOlist <-c()
+for(i in 1:nrow(z)){
+  print(i)
+  if(is.na(z$KO.x[i])){
+    tmp <- z$KO.y[i]
+  }else{
+    tmp <- z$KO.x[i]
+  }
+  KOlist <- c(KOlist,tmp)
+  
+}
+z$KOres <- KOlist
+write.csv(z,"AddKO_diff_10C12h_vs_RTF.csv")
 
