@@ -59,6 +59,7 @@ home <- tabPanel(
     fluidRow(
       DT::dataTableOutput("searchTable") 
       #textOutput("searchTable")
+      
     )
     
   )

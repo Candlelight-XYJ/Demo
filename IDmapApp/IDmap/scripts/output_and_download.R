@@ -14,6 +14,8 @@ output$searchTable <- DT::renderDataTable({
   return(react_Values$searchRes)
 })
 
+
+
 output$annotable <- DT::renderDataTable({
   
   return(react_Values$annoRes)

@@ -32,14 +32,12 @@ removeRep <- function(df){
   dupProbe <- df[!duplicated(df),]
 }
 
-
-
-agilent_human_anno <- list()
-agilent_mouse_anno <- list()
-agilent_rat_anno <- list()
+lncRNA_human_anno <- list()
+lncRNA_mouse_anno <- list()
+lncRNA_rat_anno <- list()
 
 ## 1.设置本次注释的目录，
-setwd("E:\\学习资料存放处\\IDmap\\注释存放处\\5_所有自主注释存放处\\rat_GPL\\agilent\\")
+setwd("E:\\学习资料存放处\\IDmap\\注释存放处\\5_所有自主注释存放处\\rat_lncRNA\\")
 allfiles=list.files(getwd())
 
 ## 2.读入注释
@@ -54,21 +52,38 @@ for(i in 1:length(allfiles)){
   flag = judge_spotid(pipefile)
   tmp <- separate(data = pipefile, col = V4, into = c("num", "spot_id","seq_name"), sep = ":")
   
+  ## 大鼠加上chr
+  chr <- rep("chr",times=nrow(tmp))
+  tmp$chr=paste0(chr,as.character(tmp$V1))
+  
   if(flag == 1){
-    pipeAnno <- data.frame(spot_id = tmp$num, gene_symbol = tmp$V14,
-                           chr=tmp$V1,probe_start=tmp$V2,probe_end=tmp$V3,strand=tmp$V6,
-                           gencode_chr=tmp$V7,gencode_start=tmp$V8,gencode_end=tmp$V9,
-                           ensembl_id=tmp$V10,biotype=tmp$V12
+    #pipeAnno <- data.frame(spot_id = tmp$num, gene_symbol = tmp$V14,
+    #                       chr=tmp$V1,probe_start=tmp$V2,probe_end=tmp$V3,strand=tmp$V6,
+    #                       gencode_chr=tmp$V7,gencode_start=tmp$V8,gencode_end=tmp$V9,
+    #                       ensembl_id=tmp$V10,biotype=tmp$V12
+    #                       ) 
+    pipeAnno <- data.frame(spot_id = tmp$num, gene_symbol = tmp$V12,
+                           chr=tmp$chr,probe_start=tmp$V2,probe_end=tmp$V3,strand=tmp$V6,
+                           gencode_chr=tmp$chr,gencode_start=tmp$V8,gencode_end=tmp$V9,
+                           ensembl_id=tmp$V10,biotype=tmp$V14
                            ) 
+    
+    
   }else{
-    pipeAnno <- data.frame(spot_id = tmp$spot_id,  gene_symbol = tmp$V14,
-                           chr=tmp$V1,probe_start=tmp$V2,probe_end=tmp$V3,strand=tmp$V6,
-                           gencode_chr=tmp$V7,gencode_start=tmp$V8,gencode_end=tmp$V9,
-                           ensembl_id=tmp$V10,biotype=tmp$V12) 
+    #pipeAnno <- data.frame(spot_id = tmp$spot_id,  gene_symbol = tmp$V14,
+    #                       chr=tmp$V1,probe_start=tmp$V2,probe_end=tmp$V3,strand=tmp$V6,
+    #                       gencode_chr=tmp$V7,gencode_start=tmp$V8,gencode_end=tmp$V9,
+    #                       ensembl_id=tmp$V10,biotype=tmp$V12) 
+    
+    pipeAnno <- data.frame(spot_id = tmp$seq_name,  gene_symbol = tmp$V12,
+                           chr=tmp$chr,probe_start=tmp$V2,probe_end=tmp$V3,strand=tmp$V6,
+                           gencode_chr=tmp$chr,gencode_start=tmp$V8,gencode_end=tmp$V9,
+                           ensembl_id=tmp$V10,biotype=tmp$V14) 
+    
   }
   
   # 读入soft注释
-  softfile <- read.csv(paste0("E:\\学习资料存放处\\IDmap\\注释存放处\\4_soft原始注释Anno存放处\\ratAgilent\\"
+  softfile <- read.csv(paste0("E:\\学习资料存放处\\IDmap\\注释存放处\\4_soft原始注释Anno存放处\\ratlncRNA\\"
                               ,gplnum,"_probe_anno.csv"))
   softfile[softfile==""]<-NA
   ## merge pipeAnno and softAnno
@@ -203,10 +218,10 @@ for(i in 1:length(allfiles)){
                          ensembl_id=tmpdf$ensembl_id,biotype=tmpdf$biotype
                          )
   }
-  eval(parse(text=paste0("agilent_rat_anno$",gplnum," <- res_df ")))
+  eval(parse(text=paste0("lncRNA_rat_anno$",gplnum," <- res_df ")))
  
 }
-save(agilent_rat_anno,file = "E:\\学习资料存放处\\IDmap\\注释存放处\\agilent_rat.Rdata")
+save(lncRNA_rat_anno,file = "E:\\学习资料存放处\\IDmap\\注释存放处\\lncRNA_rat.Rdata",overwrite=T)
 
 
 
