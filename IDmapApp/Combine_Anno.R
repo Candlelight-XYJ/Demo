@@ -32,12 +32,12 @@ removeRep <- function(df){
   dupProbe <- df[!duplicated(df),]
 }
 
-lncRNA_human_anno <- list()
-lncRNA_mouse_anno <- list()
-lncRNA_rat_anno <- list()
+Illumina_human_anno <- list()
+Illumina_mouse_anno <- list()
+Illumina_rat_anno <- list()
 
 ## 1.设置本次注释的目录，
-setwd("E:\\学习资料存放处\\IDmap\\注释存放处\\5_所有自主注释存放处\\rat_lncRNA\\")
+setwd("E:\\学习资料存放处\\IDmap\\注释存放处\\5_所有自主注释存放处\\mouse_GPL\\illumina\\")
 allfiles=list.files(getwd())
 
 ## 2.读入注释
@@ -45,7 +45,7 @@ allfiles=list.files(getwd())
 for(i in 1:length(allfiles)){
   # i=1
   print(i)
-  gplnum <- strsplit(allfiles[i],"_")[[1]][1]
+  gplnum <- strsplit(allfiles[i],"[.]")[[1]][1]
   # 读入自主注释
   pipefile <- read.table(allfiles[i],stringsAsFactors = F,header = F,fill = T)
   # 自主注释数据预处理
@@ -53,104 +53,112 @@ for(i in 1:length(allfiles)){
   tmp <- separate(data = pipefile, col = V4, into = c("num", "spot_id","seq_name"), sep = ":")
   
   ## 大鼠加上chr
-  chr <- rep("chr",times=nrow(tmp))
-  tmp$chr=paste0(chr,as.character(tmp$V1))
-  
+  #chr <- rep("chr",times=nrow(tmp))
+  #tmp$chr=paste0(chr,as.character(tmp$V1))
+  tmp$chr =  as.character(tmp$V1)
   if(flag == 1){
     #pipeAnno <- data.frame(spot_id = tmp$num, gene_symbol = tmp$V14,
     #                       chr=tmp$V1,probe_start=tmp$V2,probe_end=tmp$V3,strand=tmp$V6,
     #                       gencode_chr=tmp$V7,gencode_start=tmp$V8,gencode_end=tmp$V9,
     #                       ensembl_id=tmp$V10,biotype=tmp$V12
     #                       ) 
-    pipeAnno <- data.frame(spot_id = tmp$num, gene_symbol = tmp$V12,
-                           chr=tmp$chr,probe_start=tmp$V2,probe_end=tmp$V3,strand=tmp$V6,
-                           gencode_chr=tmp$chr,gencode_start=tmp$V8,gencode_end=tmp$V9,
-                           ensembl_id=tmp$V10,biotype=tmp$V14
+    pipeAnno <- data.frame(spot_id = tmp$num, gene_symbol = tmp$V14,
+                           chr=tmp$chr,
+                           probe_start=tmp$V2,probe_end=tmp$V3,strand=tmp$V6,
+                           gencode_chr=tmp$V7,gencode_start=tmp$V8,gencode_end=tmp$V9,
+                           ensembl_id=tmp$V10,biotype=tmp$V12
                            ) 
     
     
   }else{
-    #pipeAnno <- data.frame(spot_id = tmp$spot_id,  gene_symbol = tmp$V14,
+    #pipeAnno <- data.frame(spot_id = tmp$seq_name,  gene_symbol = tmp$V14,
     #                       chr=tmp$V1,probe_start=tmp$V2,probe_end=tmp$V3,strand=tmp$V6,
     #                       gencode_chr=tmp$V7,gencode_start=tmp$V8,gencode_end=tmp$V9,
     #                       ensembl_id=tmp$V10,biotype=tmp$V12) 
     
-    pipeAnno <- data.frame(spot_id = tmp$seq_name,  gene_symbol = tmp$V12,
+    pipeAnno <- data.frame(spot_id = tmp$seq_name,  gene_symbol = tmp$V14,
                            chr=tmp$chr,probe_start=tmp$V2,probe_end=tmp$V3,strand=tmp$V6,
-                           gencode_chr=tmp$chr,gencode_start=tmp$V8,gencode_end=tmp$V9,
-                           ensembl_id=tmp$V10,biotype=tmp$V14) 
+                           gencode_chr=tmp$V7,gencode_start=tmp$V8,gencode_end=tmp$V9,
+                           ensembl_id=tmp$V10,biotype=tmp$V12) 
     
   }
   
   # 读入soft注释
-  softfile <- read.csv(paste0("E:\\学习资料存放处\\IDmap\\注释存放处\\4_soft原始注释Anno存放处\\ratlncRNA\\"
-                              ,gplnum,"_probe_anno.csv"))
-  softfile[softfile==""]<-NA
+  softfile <- read.csv(paste0("E:\\学习资料存放处\\IDmap\\注释存放处\\4_soft原始注释Anno存放处\\mouseIllumina\\"
+                              ,gplnum,".csv"))
+  softAnno <- data.frame(probeid = softfile$Probe.Set.ID,
+                         gene_symbol = softfile$Gene.Symbol)
+  #softfile[softfile==""]<-NA
   ## merge pipeAnno and softAnno
-  aname <- colnames(softfile)
+  
+  #aname <- colnames(softfile)
+  #gene_symbol=c()
   # judge the colname
-  if("ID" %in% aname)
-  {
-    ID = softfile$ID
-  }
-  if("SPOT_ID" %in% aname)
-  {
-    SPOT_ID = softfile$SPOT_ID
-  }else{
-    SPOT_ID = rep("nospot",times=nrow(softfile))
-  }
-  if("NAME" %in% aname)
-  {
-    NAME = softfile$NAME 
-    
-  }else{
-    NAME = rep("noname",times=nrow(softfile))
-  }
-  if("SEQUENCE" %in% aname){
-    probeSEQUENCE = softfile$SEQUENCE
-  }else{
-    probeSEQUENCE = rep("noseq",times=nrow(softfile))
-  }
-  if("Symbol" %in% aname){
-    gene_symbol = softfile$Symbol
-  }
-  if("GENE_SYMBOL" %in% aname){
-    gene_symbol = softfile$GENE_SYMBOL
-  }
-  if("SYMBOL" %in% aname){
-    gene_symbol = softfile$SYMBOL
-  }
-  if("GeneName" %in% aname){
-    gene_symbol = softfile$GeneName
-  }
+  #if("ID" %in% aname)
+  #{
+  #  ID = softfile$ID
+  #}
+  #if("SPOT_ID" %in% aname)
+  #{
+  #  SPOT_ID = softfile$SPOT_ID
+  #}else{
+  #  SPOT_ID = rep("nospot",times=nrow(softfile))
+  #}
+  #if("NAME" %in% aname)
+  #{
+  #  NAME = softfile$NAME 
+  #  
+  #}else{
+  #  NAME = rep("noname",times=nrow(softfile))
+  #}
+  #if("SEQUENCE" %in% aname){
+  #  probeSEQUENCE = softfile$SEQUENCE
+  #}else{
+  #  probeSEQUENCE = rep("noseq",times=nrow(softfile))
+  #}
+  #if("Symbol" %in% aname){
+  #  gene_symbol = softfile$Symbol
+  #}
+  #if("GENE_SYMBOL" %in% aname){
+  #  gene_symbol = softfile$GENE_SYMBOL
+  #}
+  #if("GeneName" %in% aname){
+  #  gene_symbol = softfile$GeneName
+  #} 
+  #if("SYMBOL" %in% aname){
+  #  gene_symbol = softfile$SYMBOL
+  #}
+  #if(length(gene_symbol) == 0){
+  #  gene_symbol = rep(NA,times=nrow(softfile))
+  #}
   
   ## 判断soft的哪列与pipeAnno的探针id匹配
-  IDlen <- length(intersect(ID, pipeAnno$spot_id))
-  spotidlen <- length(intersect(SPOT_ID, pipeAnno$spot_id))
-  namelen <- length(intersect(NAME, pipeAnno$spot_id))
+  #IDlen <- length(intersect(ID, pipeAnno$spot_id))
+  #spotidlen <- length(intersect(SPOT_ID, pipeAnno$spot_id))
+  #namelen <- length(intersect(NAME, pipeAnno$spot_id))
   
-  if(IDlen >= spotidlen & IDlen >= namelen){
+#if(IDlen >= spotidlen & IDlen >= namelen){
     
-    softAnno <- data.frame(probeid = ID,
-                           gene_symbol = gene_symbol) 
-  }
+#    softAnno <- data.frame(probeid = ID,
+#                           gene_symbol = gene_symbol) 
+#  }
   
   
-  if( spotidlen >= IDlen & spotidlen >= namelen){
+#  if( spotidlen >= IDlen & spotidlen >= namelen){
     
-    softAnno <- data.frame(probeid = SPOT_ID,
-                           gene_symbol = gene_symbol) 
+#    softAnno <- data.frame(probeid = SPOT_ID,
+#                           gene_symbol = gene_symbol) 
     
     # softAnno <- data.frame(probeid = SPOT_ID,
     #                        gene_symbol = softfile$GeneName) 
     
-  }
+#  }
   
-  if( namelen >= IDlen & namelen >= spotidlen ){
+#  if( namelen >= IDlen & namelen >= spotidlen ){
     
-    softAnno <- data.frame(probeid = NAME,
-                           gene_symbol = gene_symbol) 
-  }
+#    softAnno <- data.frame(probeid = NAME,
+#                           gene_symbol = gene_symbol) 
+#  }
   
   ############################
   ##  读入bioconductor注释  ##
@@ -175,7 +183,7 @@ for(i in 1:length(allfiles)){
   if(judge_biocpac(gplnum,gpllist,gpl)){
     
     # biocAnno <- human_dat[which(human_dat$gpl == gplnum),]  
-    biocAnno <-rat_dat[grep(gplnum,rat_dat$gpl),]
+    biocAnno <-mouse_dat[grep(gplnum,mouse_dat$gpl),]
     # biocAnno <- mouse_add_gpl[which(mouse_add_gpl$gpl == gplnum),] 
     # biocAnno <- rat_add_gpl[which(rat_add_gpl$gpl == gplnum),] 
     
@@ -218,10 +226,10 @@ for(i in 1:length(allfiles)){
                          ensembl_id=tmpdf$ensembl_id,biotype=tmpdf$biotype
                          )
   }
-  eval(parse(text=paste0("lncRNA_rat_anno$",gplnum," <- res_df ")))
+  eval(parse(text=paste0("Illumina_mouse_anno$",gplnum," <- res_df ")))
  
 }
-save(lncRNA_rat_anno,file = "E:\\学习资料存放处\\IDmap\\注释存放处\\lncRNA_rat.Rdata",overwrite=T)
+save(Illumina_mouse_anno,file = "E:\\学习资料存放处\\IDmap\\注释存放处\\Illumina_mouse.Rdata",overwrite=T)
 
 
 
