@@ -1,5 +1,5 @@
 #################################
-#### last update in April 27 #### 
+#### last update in May 19 #### 
 #################################
 
 library(shiny)
@@ -36,12 +36,33 @@ volumes = getVolumes()
 ##############################
 
 ## Load users` fasta files
+
+
 loadProbeSeq <- reactive({
-  req(input$probeseq$datapath)
-  # seqfa <- read.table(input$probeseq$datapath, sep = '\n')
-  return(input$probeseq$datapath)
+  probeFastaFile <- req(input$inputFasta$datapath)
+  if(is.null(probeFastaFile)){
+  ## if input is csv table ,convert csv2fasta
+  tempPath <- tempfile()
+  seq <-  csv2fasta(input$inputCsv$datapath)
+  write(seq,tempPath)
+  return(temp)
+  }else{
+    return(probeFastaFile)
+  }
 })
-    
+
+computeIDnum <- reactive({
+    seq <- read.table(loadProbeSeq(),sep="\n")
+    #head(seq)
+    nrow(seq)
+    #ID_num=count(seq,vars=">")
+    return(nrow(seq))
+})
+
+output$showIDnum <- renderText(
+  computeIDnum())  
+  
+
 ## Load Genome
 loadUsrGenome <- reactive({
    shinyFileChoose(input, "genome", roots = volumes, session = session)
@@ -61,7 +82,6 @@ loadUsrGTF <- reactive({
 ## steps for annotating ##
 ##########################    
 source('scripts/annotate_probe.R', local = TRUE)
-
 
 ##########################
 ##   event actions   ##

@@ -70,15 +70,35 @@ home <- tabPanel(
 pipeline <- tabPanel(
   "Pipeline", icon = icon("home"),
   sidebarPanel(
-    fileInput("probeseq", "Choose FASTA File",
-              accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
+    selectInput("probeFileType", "Probe Sequences File Type",
+                c(fasta = "fasta", csv = "csv")
+    ),
+    conditionalPanel(
+      condition = "input.probeFileType == 'fasta'",
+      fileInput("inputFasta", "Choose FASTA File",
+                accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))
+      ),
+    # Only show this panel if CSV is selected
+    conditionalPanel(
+        condition = "input.probeFileType == 'csv'",
+        fileInput("inputCsv", "Choose .CSV table",
+                  accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))
+      ),
+    textOutput("showIDnum"),
+    
     fileInput("gtf", "Choose GTF File",
               accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
   
-  shinyFilesButton("genome", "Choose a Genome file" ,
-                   title = "Please select a file:", multiple = FALSE,
-                   buttonType = "default", class = NULL),
-  textOutput("showGenomePath"),
+    ## choose genome
+    selectInput("genome", "Choose Genome File",
+                c("Human Genome" = "humanGenome",
+                  "Mouse Genome" = "mouseGenome",
+                  "Rat Genome" = "ratGenome")),
+    
+  #shinyFilesButton("genome", "Choose a Genome file" ,
+  #                 title = "Please select a file:", multiple = FALSE,
+  #                 buttonType = "default", class = NULL),
+  #textOutput("showGenomePath"),
   br(),
   actionButton("doAnnotate","Start Annotating",icon("play"),
                style="color: #fff; background-color: #104E8B; border-color: #1874CD"),

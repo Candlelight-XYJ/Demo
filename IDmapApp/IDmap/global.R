@@ -28,3 +28,10 @@ getMySQLdata <- function(querySQL){
 #                       "openxlsx"))
 options(shiny.sanitize.errors = FALSE)
 
+## convert csv2fasta
+csv2fasta <- function(csvPath){
+  csv <- read.csv(csvPath)
+  fasta=paste(apply(csv,1,function(x) paste0('>',x[1],'\n',x[2])),collapse = '\n')
+  return(fasta)
+}
+
