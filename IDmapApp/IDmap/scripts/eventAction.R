@@ -42,9 +42,9 @@ observeEvent(input$doAnnotate,{
                react_Values$gtf2GR = preprocessGTF(loadUsrGTF())
                
                ## Bam2Ranges  
-               Bam2Ranges = convertBamToGR(react_Values$samFile)  
+               react_Values$Bam2GR = convertBamToGR(react_Values$samFile)  
                ## get Annotation
-               react_Values$annoRes = getAnnotation(Bam2Ranges,react_Values$gtf2GR)
+               react_Values$annoRes = getAnnotation(react_Values$Bam2GR,react_Values$gtf2GR)
                
                progress$set(value = 1, detail = "Done!")
                #setProgress(value = 1, detail = "Done!") 

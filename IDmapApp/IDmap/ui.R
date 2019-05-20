@@ -118,7 +118,13 @@ pipeline <- tabPanel(
     ),
     fluidRow(
       box(title = strong("plot_geneProbeRela"), status = "primary", 
-          plotOutput("plot_geneProbeRela", width = "100%", height = "400px"))
+          plotOutput("plot_geneProbeRela", width = "100%")),
+      box(title = strong("plot_probeMapping"), status = "warning", 
+          plotOutput("plot_probeMapping", width = "100%"),
+          sliderInput("select_chr", "Please choose chromosome to visual",
+                      min = 1, max = 20, value = 20
+          )
+          )
     )
   )
 )

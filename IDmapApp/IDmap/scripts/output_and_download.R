@@ -82,6 +82,7 @@ output$downloadGPL <- downloadHandler(
 ## plot ##
 ##########
 
+## plot probe num
 output$plot_geneProbeRela <- renderPlot({
   if(!is.null(react_Values$annoRes)){
   df <- react_Values$annoRes
@@ -100,4 +101,32 @@ output$plot_geneProbeRela <- renderPlot({
 })
 
 
+
+##### Visual probe mapping results
+output$plot_probeMapping <- renderPlot({
+  if(!is.null(react_Values$Bam2GR)){
+    chrom = input$select_chr
+    chromstart = IRanges::start(react_Values$Bam2GR[chrom])
+    chromend = IRanges::end(react_Values$Bam2GR[chrom])
+    
+    ## plot bed 
+    plotBed(beddata = react_Values$Bam2GR,chrom = input$select_chr,
+            chromstart = chromstart,chromend =chromend ,colorby = react_Values$Bam2GR$strand,
+            colorbycol = SushiColors(2),row = "auto",wiggle=0.001,splitstrand=TRUE)
+    ## label genome
+    labelgenome(input$select_chr,chromstart,chromend,n=2,scale="Kb")
+    ## add legend
+    legend("topright",inset=0,legend=c("reverse","forward"),fill=SushiColors(2)(2),
+           border=SushiColors(2)(2),text.font=2,cex=0.75)
+  }
+  
+  
+})
+
+
+#zz <- read.csv("probeAnnotations.csv")
+#plotBed(beddata = zz,chrom = c("chr1","chr2"),chromstart = 1,
+#        chromend =40000,
+#        colorbycol = SushiColors(2),row = "auto",wiggle=0.001)
+#labelgenome(c("chr1","chr2"),1,40000,n=2,scale="Kb")
 

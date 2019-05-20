@@ -13,6 +13,7 @@ library(Rsamtools)
 library(GenomicRanges)
 library(tidyverse)
 #library(Sushi)
+library(igvR)
 library(openxlsx)
 # library(IDmap)
 
@@ -27,6 +28,7 @@ react_Values <- reactiveValues(
     annoRes=NULL,
     bowtieIndex=NULL,
     samFile=NULL,
+    Bam2GR=NULL,
     gtf2GR=NULL
 )
 volumes = getVolumes()
