@@ -37,30 +37,30 @@ volumes = getVolumes()
 
 ## Load users` fasta files
 
-
 loadProbeSeq <- reactive({
-  probeFastaFile <- req(input$inputFasta$datapath)
-  if(is.null(probeFastaFile)){
-  ## if input is csv table ,convert csv2fasta
-  tempPath <- tempfile()
-  seq <-  csv2fasta(input$inputCsv$datapath)
-  write(seq,tempPath)
-  return(temp)
-  }else{
+  req(input$probeFileType)
+  if(input$probeFileType=="fasta"){
+    probeFastaFile <- req(input$inputFasta$datapath)
     return(probeFastaFile)
+  }
+  if(input$probeFileType=="csv"){
+  ## if input is csv table ,convert csv2fasta
+  tempPath <- tempdir()
+  tempPath <- csv2fasta(input$inputCsv$datapath)
+  return(file.path(tempPath))
   }
 })
 
-computeIDnum <- reactive({
-    seq <- read.table(loadProbeSeq(),sep="\n")
+#computeIDnum <- reactive({
+#    seq <- read.table(loadProbeSeq(),sep="\n",fill=TRUE)
     #head(seq)
-    nrow(seq)
+#    nrow(seq)
     #ID_num=count(seq,vars=">")
-    return(nrow(seq))
-})
+#    return(nrow(seq))
+#})
 
-output$showIDnum <- renderText(
-  computeIDnum())  
+#output$showIDnum <- renderText(
+#  computeIDnum())  
   
 
 ## Load Genome
@@ -113,6 +113,17 @@ updateSelectizeInput(session, 'selectGPL', choices = as.vector(gplname$gpl),
                      server = TRUE)
   
 })
+
+
+
+
+
+
+
+
+
+
+
 
 
 

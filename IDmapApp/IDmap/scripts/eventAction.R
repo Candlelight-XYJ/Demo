@@ -49,6 +49,6 @@ observeEvent(input$doAnnotate,{
                progress$set(value = 1, detail = "Done!")
                #setProgress(value = 1, detail = "Done!") 
                Sys.sleep(0.5)
-               
+              
 })
 

@@ -90,15 +90,15 @@ pipeline <- tabPanel(
               accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
   
     ## choose genome
-    selectInput("genome", "Choose Genome File",
-                c("Human Genome" = "humanGenome",
-                  "Mouse Genome" = "mouseGenome",
-                  "Rat Genome" = "ratGenome")),
+  #  selectInput("genome", "Choose Genome File",
+  #              c("Human Genome" = "humanGenome",
+  #                "Mouse Genome" = "mouseGenome",
+  #                "Rat Genome" = "ratGenome")),
     
-  #shinyFilesButton("genome", "Choose a Genome file" ,
-  #                 title = "Please select a file:", multiple = FALSE,
-  #                 buttonType = "default", class = NULL),
-  #textOutput("showGenomePath"),
+  shinyFilesButton("genome", "Choose a Genome file" ,
+                   title = "Please select a file:", multiple = FALSE,
+                   buttonType = "default", class = NULL),
+  textOutput("showGenomePath"),
   br(),
   actionButton("doAnnotate","Start Annotating",icon("play"),
                style="color: #fff; background-color: #104E8B; border-color: #1874CD"),
@@ -113,7 +113,12 @@ pipeline <- tabPanel(
       #box(width = 4, actionButton("count", "Increment progress"))
     ),
     fluidRow(
-    DT::dataTableOutput("annotable") 
+    box(title = strong("Annotations table"), status = "warning",width = "100%",height="600px",
+    DT::dataTableOutput("annotable"))
+    ),
+    fluidRow(
+      box(title = strong("plot_geneProbeRela"), status = "primary", 
+          plotOutput("plot_geneProbeRela", width = "100%", height = "400px"))
     )
   )
 )
@@ -139,7 +144,7 @@ body <- dashboardBody(
   ),
 fluidRow(
   tabBox(
-    id = "tabset1", height = "800px",width = 12,
+    id = "tabset1", height = "12000px",width = 12,
     home,
     pipeline,
     DEG,

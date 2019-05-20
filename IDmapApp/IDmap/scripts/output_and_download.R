@@ -17,8 +17,11 @@ output$searchTable <- DT::renderDataTable({
 
 
 output$annotable <- DT::renderDataTable({
-  
-  return(react_Values$annoRes)
+  if(!is.null(react_Values$annoRes)){
+  showAnnoRes <- react_Values$annoRes[,c(6,1,2,3,5,12)]
+  colnames(showAnnoRes)=c("probe_id","chr","start","end","strand","gene_symbol")
+  showAnnoRes
+  }
 })
 
 output$progressBox <- renderInfoBox({
@@ -30,7 +33,7 @@ output$progressBox <- renderInfoBox({
       fill = TRUE) 
   }
   else if(input$doAnnotate > 0 & is.null(react_Values$annoRes) 
-          | is.null(input$probeseq) 
+          | is.null(input$probeFileType) 
           | is.null(input$gtf) 
           | is.null(input$genome)){
     infoBox("Status",
@@ -39,7 +42,7 @@ output$progressBox <- renderInfoBox({
             fill = TRUE)
     
   }
-  else if(input$doAnnotate > 0 & is.null(react_Values$annoRes) & !is.null(input$probeseq) & !is.null(input$gtf) & !is.null(input$genome)){
+  else if(input$doAnnotate > 0 & is.null(react_Values$annoRes) & !is.null(input$probeFileType) & !is.null(input$gtf) & !is.null(input$genome)){
     infoBox("Status",
             "Annotating ... please wait!",icon = icon("flag", lib = "glyphicon"),
             color = "red",
@@ -74,4 +77,27 @@ output$downloadGPL <- downloadHandler(
     write.csv(res, file)
   }
 ) 
+
+##########
+## plot ##
+##########
+
+output$plot_geneProbeRela <- renderPlot({
+  if(!is.null(react_Values$annoRes)){
+  df <- react_Values$annoRes
+  genes=df[!duplicated(df[,12]),12]
+  probeAndgenes=data.frame()
+  for(i in 1:length(genes)){
+    probe_id=df[grep(genes[i],df[,12]),]$id
+    #tmp <- data.frame(probe_id=probe_id,
+    #                  gene=rep(genes[i],times=length(probe_id)))
+    tmp <- data.frame(gene_symbol=genes[i],probe_num=length(probe_id))
+    probeAndgenes <- rbind(probeAndgenes,tmp)
+  }
+  ggplot(probeAndgenes , aes(x = gene_symbol, y = probe_num)) +
+    geom_bar(stat = "identity",fill = "lightblue", colour = "black")
+  }
+})
+
+
 
