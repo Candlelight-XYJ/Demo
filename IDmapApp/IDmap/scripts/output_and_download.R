@@ -118,6 +118,30 @@ output$plot_probeMapping <- renderPlot({
     ## add legend
     legend("topright",inset=0,legend=c("reverse","forward"),fill=SushiColors(2)(2),
            border=SushiColors(2)(2),text.font=2,cex=0.75)
+  }else{
+    sampleDat <- read.table("E:\\GitHub\\Demo\\IDmapApp\\IDmap\\data\\sampledata\\samplebed.anno",sep="\t",stringsAsFactors = F)
+    GRobject <- with(sampleDat,GRanges(seqnames = V1,strand=V5,
+                              ranges = IRanges(start = V2, end =V3)))
+    chrom = "chr1"
+    chromstart = IRanges::start(GRobject[chrom])
+    chromend = IRanges::end(GRobject[chrom])
+    
+    ## plot bed 
+    plotBed(beddata = sampleDat,chrom = "chr1",#input$select_chr,
+            chromstart = 20000,chromend =30000 ,
+            colorby = sampleDat$V5,
+            colorbycol = SushiColors(2),
+            row = "auto",wiggle=0.001,splitstrand=TRUE)
+    ## label genome
+    labelgenome(input$select_chr,chromstart,chromend,n=2,scale="Kb")
+    ## add legend
+    legend("topright",inset=0,legend=c("reverse","forward"),fill=SushiColors(2)(2),
+           border=SushiColors(2)(2),text.font=2,cex=0.75)
+    
+    
+    
+    
+    
   }
   
   
