@@ -98,7 +98,7 @@ output$plot_geneProbeRela <- renderPlot({
   ggplot(probeAndgenes , aes(x = gene_symbol, y = probe_num)) +
     geom_bar(stat = "identity",fill = "lightblue", colour = "black")
   }else{
-    df <- read.table("data/sampledata/GPL885_bowtie.anno")
+    df <- read.table("data/sampledata/GPL885_bowtie.anno",sep="\t")
     genes=df[!duplicated(df[,12]),12]
     probeAndgenes=data.frame()
     for(i in 1:length(genes)){
@@ -119,7 +119,7 @@ output$plot_geneProbeRela <- renderPlot({
 ##### Visual probe mapping results
 output$plot_probeMapping <- renderPlot({
   if(!is.null(react_Values$Bam2GR)){
-    chrom = input$select_chr
+    chrom = paste0("chr",input$select_chr)
     chromstart = IRanges::start(react_Values$Bam2GR[chrom])
     chromend = IRanges::end(react_Values$Bam2GR[chrom])
     
