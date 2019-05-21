@@ -97,6 +97,20 @@ output$plot_geneProbeRela <- renderPlot({
   }
   ggplot(probeAndgenes , aes(x = gene_symbol, y = probe_num)) +
     geom_bar(stat = "identity",fill = "lightblue", colour = "black")
+  }else{
+    df <- read.table("data/sampledata/GPL885_bowtie.anno")
+    genes=df[!duplicated(df[,12]),12]
+    probeAndgenes=data.frame()
+    for(i in 1:length(genes)){
+      probe_id=df[grep(genes[i],df[,12]),]$id
+      #tmp <- data.frame(probe_id=probe_id,
+      #                  gene=rep(genes[i],times=length(probe_id)))
+      tmp <- data.frame(gene_symbol=genes[i],probe_num=length(probe_id))
+      probeAndgenes <- rbind(probeAndgenes,tmp)
+    }
+    ggplot(probeAndgenes , aes(x = gene_symbol, y = probe_num)) +
+      geom_bar(stat = "identity",fill = "lightblue", colour = "black") 
+    
   }
 })
 
@@ -119,28 +133,24 @@ output$plot_probeMapping <- renderPlot({
     legend("topright",inset=0,legend=c("reverse","forward"),fill=SushiColors(2)(2),
            border=SushiColors(2)(2),text.font=2,cex=0.75)
   }else{
-    sampleDat <- read.table("E:\\GitHub\\Demo\\IDmapApp\\IDmap\\data\\sampledata\\samplebed.anno",sep="\t",stringsAsFactors = F)
+    sampleDat <- read.table("data/sampledata/samplebed.anno",sep="\t",stringsAsFactors = F)
     GRobject <- with(sampleDat,GRanges(seqnames = V1,strand=V5,
-                              ranges = IRanges(start = V2, end =V3)))
-    chrom = "chr1"
-    chromstart = IRanges::start(GRobject[chrom])
-    chromend = IRanges::end(GRobject[chrom])
-    
+                                       ranges = IRanges(start = V2, end =V3)))
+    chrom = paste0("chr",input$select_chr)
+    chromstart = sort(IRanges::start(GRobject),decreasing=F)[1]
+    chromend = sort(IRanges::end(GRobject),decreasing=T)[1]
+    print(chrom)
     ## plot bed 
-    plotBed(beddata = sampleDat,chrom = "chr1",#input$select_chr,
-            chromstart = 20000,chromend =30000 ,
+    plotBed(beddata = sampleDat,chrom = chrom,#input$select_chr,
+            chromstart = chromstart,chromend =chromend,
             colorby = sampleDat$V5,
             colorbycol = SushiColors(2),
             row = "auto",wiggle=0.001,splitstrand=TRUE)
     ## label genome
-    labelgenome(input$select_chr,chromstart,chromend,n=2,scale="Kb")
+    labelgenome(chrom,chromstart,chromend,n=12,scale="Mb")
     ## add legend
-    legend("topright",inset=0,legend=c("reverse","forward"),fill=SushiColors(2)(2),
+    legend("topright",inset=0,legend=c("forward","reverse"),fill=SushiColors(2)(2),
            border=SushiColors(2)(2),text.font=2,cex=0.75)
-    
-    
-    
-    
     
   }
   

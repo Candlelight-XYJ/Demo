@@ -122,7 +122,7 @@ pipeline <- tabPanel(
       box(title = strong("plot_probeMapping"), status = "warning", 
           plotOutput("plot_probeMapping", width = "100%"),
           sliderInput("select_chr", "Please choose chromosome to visual",
-                      min = 1, max = 20, value = 20
+                      min = 1, max = 22, value = 1
           )
           )
     )
