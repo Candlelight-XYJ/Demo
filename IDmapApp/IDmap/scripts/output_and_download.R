@@ -98,18 +98,22 @@ output$plot_geneProbeRela <- renderPlot({
   ggplot(probeAndgenes , aes(x = gene_symbol, y = probe_num)) +
     geom_bar(stat = "identity",fill = "lightblue", colour = "black")
   }else{
-    df <- read.table("data/sampledata/GPL885_bowtie.anno",sep="\t")
+    df <- read.csv("data/sampledata/sampleAnno.csv",stringsAsFactors = F)
     genes=df[!duplicated(df[,12]),12]
     probeAndgenes=data.frame()
     for(i in 1:length(genes)){
+      print(i)
       probe_id=df[grep(genes[i],df[,12]),]$id
       #tmp <- data.frame(probe_id=probe_id,
       #                  gene=rep(genes[i],times=length(probe_id)))
       tmp <- data.frame(gene_symbol=genes[i],probe_num=length(probe_id))
       probeAndgenes <- rbind(probeAndgenes,tmp)
     }
-    ggplot(probeAndgenes , aes(x = gene_symbol, y = probe_num)) +
-      geom_bar(stat = "identity",fill = "lightblue", colour = "black") 
+    p <- ggplot(probeAndgenes[input$watch_genes[1]:input$watch_genes[2],] 
+                , aes(x = gene_symbol, y = probe_num)) +
+      geom_bar(stat = "identity",fill = "lightblue", colour = "black")
+    p <- p + theme(axis.text.x = element_text(size = 10, color = "black", vjust = 0.5, hjust = 0.5, angle = 90),panel.grid =element_blank(),panel.border = element_blank())
+    p
     
   }
 })
@@ -117,6 +121,8 @@ output$plot_geneProbeRela <- renderPlot({
 
 
 ##### Visual probe mapping results
+
+
 output$plot_probeMapping <- renderPlot({
   if(!is.null(react_Values$Bam2GR)){
     chrom = paste0("chr",input$select_chr)
@@ -128,11 +134,12 @@ output$plot_probeMapping <- renderPlot({
             chromstart = chromstart,chromend =chromend ,colorby = react_Values$Bam2GR$strand,
             colorbycol = SushiColors(2),row = "auto",wiggle=0.001,splitstrand=TRUE)
     ## label genome
-    labelgenome(input$select_chr,chromstart,chromend,n=2,scale="Kb")
+    labelgenome(input$select_chr,chromstart,chromend,n=12,scale="Mb")
     ## add legend
     legend("topright",inset=0,legend=c("reverse","forward"),fill=SushiColors(2)(2),
            border=SushiColors(2)(2),text.font=2,cex=0.75)
   }else{
+    print("ok")
     sampleDat <- read.table("data/sampledata/samplebed.anno",sep="\t",stringsAsFactors = F)
     GRobject <- with(sampleDat,GRanges(seqnames = V1,strand=V5,
                                        ranges = IRanges(start = V2, end =V3)))

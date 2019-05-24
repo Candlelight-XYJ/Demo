@@ -108,26 +108,31 @@ pipeline <- tabPanel(
   ),
   mainPanel(
     fluidRow(
-      infoBoxOutput("progressBox")
+      infoBoxOutput("progressBox",width=4)
       # Clicking this will increment the progress amount
       #box(width = 4, actionButton("count", "Increment progress"))
     ),
-    fluidRow(
-    box(title = strong("Annotations table"), status = "warning",width = "100%",height="600px",
-    DT::dataTableOutput("annotable"))
+   fluidRow(
+    DT::dataTableOutput("annotable")
+   ),
+   fluidRow(
+      box(title = strong("genes - Probe Relations"), status = "primary", 
+          plotOutput("plot_geneProbeRela")),
+      box(sliderInput("watch_genes", "Please choose chromosome to visualize",
+                      min = 1, max = 150, value = c(1,150)),
+          downloadButton("download_probe_genes", "Download",icon("download"))
+          )
     ),
-    fluidRow(
-      box(title = strong("plot_geneProbeRela"), status = "primary", 
-          plotOutput("plot_geneProbeRela", width = "100%")),
-      box(title = strong("plot_probeMapping"), status = "warning", 
-          plotOutput("plot_probeMapping", width = "100%"),
-          sliderInput("select_chr", "Please choose chromosome to visual",
-                      min = 1, max = 22, value = 1
-          )
-          )
-    )
+   fluidRow(
+     box(title = strong("probe Mapping"), status = "warning", 
+         plotOutput("plot_probeMapping")),
+      box(sliderInput("select_chr", "Please choose chromosome to visualize",
+                     min = 1, max = 22, value = 1))
+     ) 
+     
+   )
   )
-)
+
 
 ## body - DEG
 DEG <- tabPanel(
