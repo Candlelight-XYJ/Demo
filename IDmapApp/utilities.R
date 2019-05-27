@@ -1,4 +1,5 @@
-setwd("E:\\学习资料存放处\\IDmap\\pipeAnno\\")
+##setwd("E:\\学习资料存放处\\IDmap\\pipeAnno\\")
+setwd("E:\\学习资料存放处\\IDmap\\注释存放处\\7_添加坐标后的最终注释\\")
 
 ## Load all data from dir
 allfiles = list.files(getwd())
@@ -43,6 +44,7 @@ setwd("E:\\学习资料存放处\\IDmap\\注释存放处\\7_添加坐标后的�
 ## Load all data from dir
 allfiles = list.files(getwd())
 for(i in 1:length(allfiles)){
+  print(i)
   eval(parse(text = paste0("load(","\'",allfiles[i],"\'",")")))
 }
 
@@ -58,7 +60,7 @@ for(j in 1:length(datNames)){
   print(j)      
   ## Anno
   Anno <- eval(parse(text = paste0("lncRNA_human_anno","$",datNames[j])))
-  Anno$gpl <- rep(datNames[j],times=nrow(nAnno))
+  Anno$gpl <- rep(datNames[j],times=nrow(Anno))
   allRes <- rbind(allRes,Anno)
 }
 write.csv(allRes,"E:\\学习资料存放处\\IDmap\\注释存放处\\8_MySQL_table最新版\\lncRNA_human_anno.csv",row.names=F)

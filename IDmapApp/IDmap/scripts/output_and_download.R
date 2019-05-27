@@ -24,6 +24,12 @@ output$annotable <- DT::renderDataTable({
   }
 })
 
+output$no_results <- renderText({
+  if(is.null(react_Values$annoRes)){
+    return("No Results")
+  }
+})
+
 output$progressBox <- renderInfoBox({
   
   if(input$doAnnotate == 0) {

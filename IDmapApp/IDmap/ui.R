@@ -113,7 +113,10 @@ pipeline <- tabPanel(
       #box(width = 4, actionButton("count", "Increment progress"))
     ),
    fluidRow(
-    DT::dataTableOutput("annotable")
+    box(
+    title = strong("annotation results"), status = "primary",
+    DT::dataTableOutput("annotable"),
+    textOutput("no_results"))
    ),
    fluidRow(
       box(title = strong("genes - Probe Relations"), status = "primary", 
@@ -136,9 +139,21 @@ pipeline <- tabPanel(
 
 ## body - DEG
 DEG <- tabPanel(
-  "DEG",icon = icon("bar-chart-o")
-     )
-
+  "DEG",icon = icon("bar-chart-o"),
+  sidebarPanel(
+    selectInput("expFileType", "Expression File Type",
+                c(chip = "chip", rnaseq = "rnaseq")),
+    fileInput("inputExpData", "Input Expression Data",
+                accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
+    
+    actionButton("doDEG","Start DEG analysis",icon("play"),
+                 style="color: #fff; background-color: #104E8B; border-color: #1874CD")            
+  ),
+  mainPanel(
+    
+    
+  )
+)
 
 ## body - Help&About Us
 

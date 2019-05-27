@@ -15,8 +15,8 @@ library(tidyverse)
 library(Sushi)
 #library(igvR)
 library(openxlsx)
-# library(IDmap)
-
+#library(GEOmetadb)
+library(GEOquery)
 
 ## Limit the size of load data in 50M
 options(shiny.maxRequestSize = 50 * 1024^2)
@@ -83,7 +83,7 @@ loadUsrGTF <- reactive({
 ##########################
 ## steps for annotating ##
 ##########################    
-source('scripts/annotate_probe.R', local = TRUE)
+source('scripts/probeAnnotate.R', local = TRUE)
 
 ##########################
 ##   event actions   ##
@@ -94,6 +94,13 @@ source('scripts/eventAction.R', local = TRUE)
 ##     output & download    ##
 ##############################
 source('scripts/output_and_download.R', local = TRUE)
+
+
+##############################
+##     DEG    ##
+##############################
+source('scripts/doDEG.R', local = TRUE)
+
 
 
 ######################
