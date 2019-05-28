@@ -53,26 +53,27 @@ datasets <- ls()
 datasets <- datasets[c(-7,-8,-10,-19)] ## delete the element in vector
 datasets
 
-datNames <- names(lncRNA_human_anno)
+datNames <- names(illumina_rat_anno)
 allRes <- data.frame()
 
 for(j in 1:length(datNames)){
   print(j)      
   ## Anno
-  Anno <- eval(parse(text = paste0("lncRNA_human_anno","$",datNames[j])))
+  Anno <- eval(parse(text = paste0("illumina_rat_anno","$",datNames[j])))
   Anno$gpl <- rep(datNames[j],times=nrow(Anno))
   allRes <- rbind(allRes,Anno)
 }
-write.csv(allRes,"E:\\学习资料存放处\\IDmap\\注释存放处\\8_MySQL_table最新版\\lncRNA_human_anno.csv",row.names=F)
+write.csv(allRes,"E:\\学习资料存放处\\IDmap\\注释存放处\\8_MySQL_table最新版\\Illumina_rat_anno.csv",row.names=F)
 
 
 
 #allfiles <- list.files(getwd())
-#options(stringsAsFactors = F)
-#affy <- read.csv("affy_rat_AllData.csv")
-#illumina <- read.csv("illumina_rat_AllData.csv")
-#agilent <- read.csv("agilent_rat_AllData.csv")
-#lncRNA <- read.csv("lncRNA_rat_AllData.csv")
+setwd("E:\\学习资料存放处\\IDmap\\注释存放处\\8_MySQL_table最新版\\")
+options(stringsAsFactors = F)
+affy <- read.csv("affy_rat_anno.csv")
+illumina <- read.csv("illumina_rat_anno.csv")
+agilent <- read.csv("agilent_rat_anno.csv")
+lncRNA <- read.csv("lncRNA_rat_anno.csv")
 
 
 ## add company
@@ -83,12 +84,12 @@ write.csv(allRes,"E:\\学习资料存放处\\IDmap\\注释存放处\\8_MySQL_tab
 
 
 ## bind all files
-#tmpRes <- rbind(affy,illumina)
-#tmpRes2 <- rbind(agilent,lncRNA)
-#allXres <- rbind(tmpRes,tmpRes2)
+tmpRes <- rbind(affy,illumina)
+allXres <- rbind(agilent,tmpRes)
+##allXres <- rbind(tmpRes,tmpRes2)
 
-#write.csv(allXres,"rat_All_anno.csv")
-
+save(allXres,file="rat_all_anno.Rdata",overwrite=T)
+save(lncRNA,file="rat_lncRNA_anno.Rdata",overwrite=T)
 
 
 
