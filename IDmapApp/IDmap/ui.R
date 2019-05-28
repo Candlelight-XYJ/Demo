@@ -30,8 +30,10 @@ home <- tabPanel(
   sidebarPanel(
   selectizeInput("selectSpe", "Select Species", choices=c("human","mouse","rat"), selected = NULL, multiple = FALSE,
                    options = NULL),
-  selectizeInput("selectType", "Select type", choices=c("protein-coding" = "protein" , "non-coding" = "nonc"), selected = NULL, multiple = FALSE,
-                 options = NULL),
+  selectizeInput("selectType", "Select biotype", 
+                 choices=c("protein_coding" = "protein_coding" , 
+                                                           "non_coding"="non_coding",
+                                                           "all" = "*"), selected = NULL, multiple = FALSE,options = NULL),
   selectizeInput("selectGPL", 
                  label = "Please input geo platform number(GPL)", 
                  choices = NULL ,
@@ -121,7 +123,7 @@ pipeline <- tabPanel(
    fluidRow(
       box(title = strong("genes - Probe Relations"), status = "primary", 
           plotOutput("plot_geneProbeRela")),
-      box(sliderInput("watch_genes", "Please choose chromosome to visualize",
+      box(sliderInput("watch_genes", "Please choose Genomic Ranges",
                       min = 1, max = 150, value = c(1,150)),
           downloadButton("download_probe_genes", "Download",icon("download"))
           )

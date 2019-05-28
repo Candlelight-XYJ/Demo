@@ -79,7 +79,7 @@ output$downloadGPL <- downloadHandler(
           'anno', Sys.Date(), '.csv', sep='-')
   },
   content = function(file) {
-    res=react_Valuse$searchRes
+    res=react_Values$searchRes
     write.csv(res, file)
   }
 ) 

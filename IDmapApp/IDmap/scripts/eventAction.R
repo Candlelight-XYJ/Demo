@@ -3,11 +3,11 @@
 #####################  
 observeEvent(input$searchGPL,{
   #querySQL="select * from"
-  querySQL <- paste0("select * from ",input$selectSpe,"_All_anno"," where gpl = ",shQuote(input$selectGPL),
+  querySQL <- paste0("select * from ",input$selectSpe,"_all_anno"," where gpl = ",shQuote(input$selectGPL),
                      " and ","biotype = ",shQuote(input$selectType))
   #print(querySQL)
-  react_Values$searchRes <- getMySQLdata(querySQL)
-  
+  tmp <- getSQLitedata(querySQL)
+  react_Values$searchRes <- tmp
 })
 
 #################
