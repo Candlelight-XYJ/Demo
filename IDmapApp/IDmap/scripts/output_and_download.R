@@ -109,8 +109,9 @@ output$plot_geneProbeRela <- renderPlot({
     df <- react_Values$annoRes
     genePerProbeNum = df %>% dplyr::count(df[,12])
     colnames(genePerProbeNum) <- c("gene_symbol","probe_num")
+    print(input$select_numRanges)
     tmp <- genePerProbeNum[order(genePerProbeNum$probe_num,decreasing = T),]
-    p <- ggplot(head(tmp,n=20), aes(x = gene_symbol, y = probe_num)) +
+    p <- ggplot(tmp[inputselect_numRanges[1]:input$select_numRanges[2],], aes(x = gene_symbol, y = probe_num)) +
       geom_bar(stat = "identity",fill = "lightblue", colour = "black")
     p <- p + theme(axis.text.x = element_text(size = 10, color = "black", vjust = 0.5, hjust = 0.5, angle = 90),panel.grid =element_blank(),panel.border = element_blank())
     p
@@ -121,8 +122,9 @@ output$plot_geneProbeRela <- renderPlot({
     genePerProbeNum = df %>% dplyr::count(df$V7)
     colnames(genePerProbeNum) <- c("gene_symbol","probe_num")
     tmp <- genePerProbeNum[order(genePerProbeNum$probe_num,decreasing = T),]
-    
-    p <- ggplot(head(tmp,n=20), aes(x = gene_symbol, y = probe_num)) +
+    ## only show top 100 probeSets   
+    p <- ggplot(tmp[input$select_numRanges[1]:input$select_numRanges[2],]
+                , aes(x = gene_symbol, y = probe_num)) +
       geom_bar(stat = "identity",fill = "lightblue", colour = "black")
     p <- p + theme(axis.text.x = element_text(size = 10, color = "black", vjust = 0.5, hjust = 0.5, angle = 90),panel.grid =element_blank(),panel.border = element_blank())
     p

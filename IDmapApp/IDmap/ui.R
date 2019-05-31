@@ -118,9 +118,9 @@ pipeline <- tabPanel(
     textOutput(strong("no_results")))
    ),
    fluidRow(
-      box(title = strong("genes - Probe Relations"), status = "primary",plotOutput("plot_geneProbeRela"),
-          sliderInput("watch_genes", "Please choose Genomic Ranges",
-                      min = 1, max = 150, value = c(1,150)),
+      box(title = strong("Probe Sets"), status = "primary",plotOutput("plot_geneProbeRela"),
+          sliderInput("select_numRanges", "Please choose Genomic Ranges",
+                      min = 1, max = 100, value = c(1,50)),
           downloadButton("download_probe_genes", "Download",icon("download"))
           ),
       box(title = strong("probe Mapping"), status = "warning",plotOutput("plot_probeMapping"),
