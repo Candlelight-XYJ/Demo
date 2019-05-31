@@ -33,9 +33,9 @@ output$searchTable <- DT::renderDataTable({
 
 output$annotable <- DT::renderDataTable({
   if(!is.null(react_Values$annoRes)){
-  showAnnoRes <- react_Values$annoRes[,c(6,1,2,3,5,12)]
-  colnames(showAnnoRes)=c("probe_id","chr","start","end","strand","gene_symbol")
-  showAnnoRes
+    showAnnoRes <- react_Values$annoRes[,c(6,1,2,3,5,12)]
+    colnames(showAnnoRes)=c("probe_id","chr","start","end","strand","gene_symbol")
+    showAnnoRes
   }
 })
 
@@ -49,9 +49,9 @@ output$progressBox <- renderInfoBox({
   
   if(input$doAnnotate == 0) {
     infoBox("Status",
-      "Annotate Not Started Yet!",icon = icon("flag", lib = "glyphicon"),
-      color = "aqua",
-      fill = TRUE) 
+            "Annotate Not Started Yet!",icon = icon("flag", lib = "glyphicon"),
+            color = "aqua",
+            fill = TRUE) 
   }
   else if(input$doAnnotate > 0 & is.null(react_Values$annoRes) 
           | is.null(input$probeFileType) 
@@ -85,7 +85,7 @@ output$downloadAnno <- downloadHandler(
   filename = "probeAnnotations.csv", 
   content = function(file) {
     write.csv(react_Values$annoRes, file, row.names = F)
-})
+  })
 
 
 output$downloadGPL <- downloadHandler(
@@ -106,32 +106,23 @@ output$downloadGPL <- downloadHandler(
 ## plot probe num
 output$plot_geneProbeRela <- renderPlot({
   if(!is.null(react_Values$annoRes)){
-  df <- react_Values$annoRes
-  genes=df[!duplicated(df[,12]),12]
-  probeAndgenes=data.frame()
-  for(i in 1:length(genes)){
-    probe_id=df[grep(genes[i],df[,12]),]$id
-    #tmp <- data.frame(probe_id=probe_id,
-    #                  gene=rep(genes[i],times=length(probe_id)))
-    tmp <- data.frame(gene_symbol=genes[i],probe_num=length(probe_id))
-    probeAndgenes <- rbind(probeAndgenes,tmp)
-  }
-  ggplot(probeAndgenes , aes(x = gene_symbol, y = probe_num)) +
-    geom_bar(stat = "identity",fill = "lightblue", colour = "black")
+    df <- react_Values$annoRes
+    genePerProbeNum = df %>% dplyr::count(df[,12])
+    colnames(genePerProbeNum) <- c("gene_symbol","probe_num")
+    tmp <- genePerProbeNum[order(genePerProbeNum$probe_num,decreasing = T),]
+    p <- ggplot(head(tmp,n=20), aes(x = gene_symbol, y = probe_num)) +
+      geom_bar(stat = "identity",fill = "lightblue", colour = "black")
+    p <- p + theme(axis.text.x = element_text(size = 10, color = "black", vjust = 0.5, hjust = 0.5, angle = 90),panel.grid =element_blank(),panel.border = element_blank())
+    p
+    
   }else{
-    df <- read.csv("data/sampledata/sampleAnno.csv",stringsAsFactors = F)
-    genes=df[!duplicated(df[,12]),12]
-    probeAndgenes=data.frame()
-    for(i in 1:length(genes)){
-      print(i)
-      probe_id=df[grep(genes[i],df[,12]),]$id
-      #tmp <- data.frame(probe_id=probe_id,
-      #                  gene=rep(genes[i],times=length(probe_id)))
-      tmp <- data.frame(gene_symbol=genes[i],probe_num=length(probe_id))
-      probeAndgenes <- rbind(probeAndgenes,tmp)
-    }
-    p <- ggplot(probeAndgenes[input$watch_genes[1]:input$watch_genes[2],] 
-                , aes(x = gene_symbol, y = probe_num)) +
+    df <- read.table("data/sampledata/samplebed.anno",stringsAsFactors = F,sep="\t")
+    #df <- df[order(df$V7),]
+    genePerProbeNum = df %>% dplyr::count(df$V7)
+    colnames(genePerProbeNum) <- c("gene_symbol","probe_num")
+    tmp <- genePerProbeNum[order(genePerProbeNum$probe_num,decreasing = T),]
+    
+    p <- ggplot(head(tmp,n=20), aes(x = gene_symbol, y = probe_num)) +
       geom_bar(stat = "identity",fill = "lightblue", colour = "black")
     p <- p + theme(axis.text.x = element_text(size = 10, color = "black", vjust = 0.5, hjust = 0.5, angle = 90),panel.grid =element_blank(),panel.border = element_blank())
     p
