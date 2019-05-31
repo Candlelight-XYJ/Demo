@@ -11,7 +11,22 @@ output$viewBed <- renderPlot({
 #  return(head(react_Values$searchRes))
 #})
 output$searchTable <- DT::renderDataTable({
-  return(react_Values$searchRes)
+  searchRes <- react_Values$searchRes
+  if(!is.null(searchRes)){
+    tmp1 <- with(searchRes, data.frame(probe_id = probe_id, pipeAnno = pipeAnno,
+                                       biocAnno = biocAnno, ensembl_id = ensembl_id, biotype = biotype))
+    tmp1$GPL <- createLink(paste0("https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=",searchRes$gpl),searchRes$gpl)
+    
+    #genome=ifelse(glob_values$species=='human','hg38','mm10')
+    #UCSC_link=createLink(paste0( "http://dc2.cistrome.org/api/hgtext/", tmp1$sampleID,
+    #                             "/?db=",genome,
+    #                             "&position=",  tmp1$chrom,":",tmp1$start-1000,"-",tmp1$end+1000
+    #)
+    #,'UCSC')
+    
+  }
+  
+  return(tmp1)
 })
 
 

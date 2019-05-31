@@ -17,7 +17,7 @@ library(Sushi)
 library(openxlsx)
 #library(GEOmetadb)
 library(GEOquery)
-
+library(RSQLite)
 ## Limit the size of load data in 50M
 options(shiny.maxRequestSize = 50 * 1024^2)
 

@@ -38,6 +38,10 @@ getSQLitedata <- function(querySQL){
 #                       "openxlsx"))
 options(shiny.sanitize.errors = FALSE)
 
+## create Links
+createLink <- function(base,val) {
+  sprintf('<a href="%s" class="btn btn-link" target="_blank" >%s</a>',base,val) ##target="_blank"
+}
 ## convert csv2fasta
 csv2fasta <- function(csvPath){
   csv <- read.csv(csvPath)
