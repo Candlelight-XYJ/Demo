@@ -34,8 +34,10 @@ getSQLitedata <- function(querySQL){
 #                       "refGenome",
 #                       "GenomicRanges",
 #                       "tidyverse",
-#                       "Sushi",
-#                       "openxlsx"))
+#                       "Sushi","shinythemes","GEOquery"))
+
+#install.packages(c("knitr","openxlsx","RSQLite"))
+
 options(shiny.sanitize.errors = FALSE)
 
 ## create Links

@@ -93,5 +93,69 @@ save(lncRNA,file="rat_lncRNA_anno.Rdata",overwrite=T)
 
 
 
+###########################
+###  check annotations  ###
+###########################
+rm(list=ls())
+setwd("E:\\学习资料存放处\\IDmap\\注释存放处\\8_MySQL_table最新版\\rdata\\")
+## Load all data from dir
+#allfiles = list.files(getwd())
+#for(i in 1:length(allfiles)){
+#  print(i)
+#  eval(parse(text = paste0("load(","\'",allfiles[i],"\'",")")))
+#}
+load("mouse_lncRNA_anno.Rdata")
+
+##datNames <- names(affy_human_anno)
+##allRes <- data.frame()
+#gpl <- allXres[!duplicated(allXres$gpl),14]
+#tmpHead <- data.frame()
+#for(i in 1:length(gpl)){
+#  print(i)
+#  tmp <- allXres[which(allXres$gpl==gpl[i]),]
+#  tmpHead <- rbind(head(tmp,n=30),tmpHead)
+  
+#}
+
+gpl <- lncRNA[!duplicated(lncRNA$gpl),14]
+tmpHead <- data.frame()
+for(i in 1:length(gpl)){
+  print(i)
+  tmp <- lncRNA[which(lncRNA$gpl==gpl[i]),]
+  tmpHead <- rbind(head(tmp,n=30),tmpHead)
+  
+}
+
+write.csv(tmpHead,"check_mouse_lncRNA注释.csv")
+
+tmp <- lncRNA[which(lncRNA$gpl=="GPL22755"),]
+
+#############
+##-- LOG --##
+#############
+
+## human
+## GPL8179 & GPL8178 softAnno is probe id
+## GPL93,94,92,95,97 softAnno NA的地方变成了 --- ,要改成NA
+
+## mouse
+## GPL8180 ,8181, softAnno is probe id
+## GPL82, softAnno NA的地方变成了 --- ,要改成NA
+
+## rat
+## GPL1355 pipeAnno and biotype has ;
+## GPL14187 GPL16985, should be rearranged, pipeAnno is none
+## GPL85,GPL86 ,GPL87,GPL89 should be rearranged and the softAnno --- should be change as NA
+
+## human LncRNA
+## GPL1783,GPL18084,softAnno 重新取
+## GPL7850 softAnno has entrezId, can be convert2symbol 
+## GPL19612 softAnno 重新取geneSymbol
+## 19946 GB_accession
+## GPL19920,softAnno GeneName ; 
+## GPL21096 softAnno Target ID; GPL21047 softAnno GeneName;20115 softAnno GeneSymbol
+## GPL22755 softAnno GeneSymbol; GPL23292 softAnno LncRNA_ID
+
+
 
 
