@@ -6,7 +6,8 @@ observeEvent(input$searchGPL,{
   querySQL <- paste0("select * from ",input$selectSpe,"_all_anno"," where gpl = ",shQuote(input$selectGPL),
                      " and ","biotype = ",shQuote(input$selectType))
   #print(querySQL)
-  tmp <- getSQLitedata(querySQL)
+  #tmp <- getSQLitedata(querySQL)
+  tmp <- getMySQLdata(querySQL)
   react_Values$searchRes <- tmp
 })
 
@@ -23,7 +24,18 @@ observeEvent(input$doAnnotate,{
                ## build genome index
                if(F){
                ## if the genome index we have, then use the exist index  
-                   
+               react_Values$bowtieIndex = paste0("/data/genome_index/",input$selectGenome)
+               react_Values$samFile = getBowtieAlign(loadProbeSeq(),indexDir)
+               react_Values$gtfFile = data.table::fread(paste0("/data/genome_index/",input$selectGTF),
+                                                                    sep = "\t",skip="##",header = F)
+                 
+               ## preprocess gtf files
+               react_Values$gtf2GR = preprocessGTF(react_Values$gtfFile)
+               ## Bam2Ranges  
+               react_Values$Bam2GR = convertBamToGR(react_Values$samFile)  
+               ## get Annotation
+               react_Values$annoRes = getAnnotation(react_Values$Bam2GR,react_Values$gtf2GR)
+               
                }else{
                ## if input genome we don`t have index,then build index by Rbowtie
                ## it may take a long time ---

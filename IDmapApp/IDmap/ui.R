@@ -31,9 +31,10 @@ home <- tabPanel(
   selectizeInput("selectSpe", "Select Species", choices=c("human","mouse","rat"), selected = NULL, multiple = FALSE,
                    options = NULL),
   selectizeInput("selectType", "Select biotype", 
-                 choices=c("protein_coding" = "protein_coding" , 
-                                                           "non_coding"="non_coding",
-                                                           "all" = "*"), selected = NULL, multiple = FALSE,options = NULL),
+                 choices=c("protein_coding" = "protein_coding" 
+                           ,"non_coding"="non_coding"
+                           ,"lincRNA"="lincRNA",
+                           "all" = "*"), selected = NULL, multiple = FALSE,options = NULL),
   selectizeInput("selectGPL", 
                  label = "Please input geo platform number(GPL)", 
                  choices = NULL ,
@@ -87,20 +88,44 @@ pipeline <- tabPanel(
                   accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))
       ),
     textOutput("showIDnum"),
-    
-    fileInput("gtf", "Choose GTF File",
-              accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
+   
+   ## input GTF 
+   # fileInput("gtf", "Choose GTF File",
+   #          accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
+   
+   
+   
+   ## choose GTF file  
+   selectizeInput("selectGTF", "Select GTF File", 
+                  choices=c("human" = "human" 
+                            ,"mouse"="mouse"
+                            ,"rat"="rat",
+                            "other" = "other"), selected = NULL, multiple = FALSE,options = NULL),
+   checkboxInput("checkGTF", "I want to input customed GTF", FALSE),
+   conditionalPanel(
+     condition = "input.checkGTF",
+     fileInput("gtf", "Load your GTF file",
+                      accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))
+   ),
+   ## choose genome
+   selectInput("selectGenome", "Choose Genome File",
+                c("Human Genome" = "human",
+                  "Mouse Genome" = "mouse",
+                  "Rat Genome" = "rat")),
+   
+  checkboxInput("checkGenome", "I want to input customed Genome", FALSE),  
+  conditionalPanel(
+    condition = "input.checkGenome",
+    shinyFilesButton("genome", "Load your Genome file" ,
+                     title = "Please select a file:", multiple = FALSE,
+                     buttonType = "default", class = NULL),
+    textOutput("showGenomePath")
+  ),
+  #shinyFilesButton("genome", "Choose a Genome file" ,
+  #                 title = "Please select a file:", multiple = FALSE,
+  #                 buttonType = "default", class = NULL),
+  #textOutput("showGenomePath"),
   
-    ## choose genome
-  #  selectInput("genome", "Choose Genome File",
-  #              c("Human Genome" = "humanGenome",
-  #                "Mouse Genome" = "mouseGenome",
-  #                "Rat Genome" = "ratGenome")),
-    
-  shinyFilesButton("genome", "Choose a Genome file" ,
-                   title = "Please select a file:", multiple = FALSE,
-                   buttonType = "default", class = NULL),
-  textOutput("showGenomePath"),
   br(),
   actionButton("doAnnotate","Start Annotating",icon("play"),
                style="color: #fff; background-color: #104E8B; border-color: #1874CD"),

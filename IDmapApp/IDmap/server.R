@@ -26,6 +26,7 @@ shinyServer(function(input, output, session) {
 react_Values <- reactiveValues(
     searchRes=NULL,
     annoRes=NULL,
+    gtfFile=NULL,
     bowtieIndex=NULL,
     samFile=NULL,
     Bam2GR=NULL,
@@ -75,7 +76,8 @@ output$showGenomePath <- renderText(loadUsrGenome())
 ## Load GTF
 loadUsrGTF <- reactive({
    req(input$gtf)
-   gtfFile <- data.table::fread(input$gtf$datapath, sep = "\t")
+   gtfFile <- data.table::fread(input$gtf$datapath, sep = "\t"
+                                ,skip="##",header = F)
    return(gtfFile)
 })
     
@@ -122,11 +124,6 @@ updateSelectizeInput(session, 'selectGPL', choices = as.vector(gplname$gpl),
                      server = TRUE)
   
 })
-
-
-
-
-
 
 
 
