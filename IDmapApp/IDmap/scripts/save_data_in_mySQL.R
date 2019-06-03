@@ -1,40 +1,29 @@
+# mysql -h 127.0.0.1 -u idmap -p
+
+###########################
+setwd("/home/yjxiang/IDmap/")
+allfiles = list.files(getwd())
+for(i in 1:length(allfiles)){
+  eval(parse(text = paste0("load(","\'",allfiles[i],"\'",")")))
+}
+
+
 library(RMySQL)
+  host <<- "127.0.0.1"
+  port <<- 3306
+  user <<- "idmap"
+  password <<-  "idmap_biotrainee"
+  dbname <<- "idmap"
+  db <- dbConnect(RMySQL::MySQL(), host=host,
+                  dbname=dbname,port=port, 
+                  user=user, password=password)
 
-options(mysql = list(
-  "host" = "127.0.0.1",
-  "port" = 3306,
-  "user" = "myuser",
-  "password" = "mypassword"
-))
-databaseName <- "myshinydatabase"
-table <- "responses"
-
-saveData <- function(data) {
-  # Connect to the database
-  db <- dbConnect(MySQL(), dbname = databaseName, host = options()$mysql$host, 
-                  port = options()$mysql$port, user = options()$mysql$user, 
-                  password = options()$mysql$password)
-  # Construct the update query by looping over the data fields
-  query <- sprintf(
-    "INSERT INTO %s (%s) VALUES ('%s')",
-    table, 
-    paste(names(data), collapse = ", "),
-    paste(data, collapse = "', '")
-  )
-  # Submit the update query and disconnect
-  dbGetQuery(db, query)
+  zz <- dbWriteTable(conn = db,
+                     name = "rat_lncRNA_anno",
+                     value = rat_lncRNA_anno,
+                     overwrite = F,
+                     row.names = FALSE)
+  #dbGetQuery(db, 'SELECT * FROM human_all_anno LIMIT 25')
+  dbListTables(db)
   dbDisconnect(db)
-}
 
-loadData <- function() {
-  # Connect to the database
-  db <- dbConnect(MySQL(), dbname = databaseName, host = options()$mysql$host, 
-                  port = options()$mysql$port, user = options()$mysql$user, 
-                  password = options()$mysql$password)
-  # Construct the fetching query
-  query <- sprintf("SELECT * FROM %s", table)
-  # Submit the fetch query and disconnect
-  data <- dbGetQuery(db, query)
-  dbDisconnect(db)
-  data
-}
