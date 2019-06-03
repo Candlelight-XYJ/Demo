@@ -15,4 +15,4 @@
 ##}
 
 ## read data from xlsx
-geneInfo <- read.xlsx("E:/GitHub/Demo/MeetSelf/MeGene/data/geneinfo.xlsx")
+#geneInfo <- read.xlsx("E:/GitHub/Demo/MeetSelf/MeGene/data/geneinfo.xlsx")

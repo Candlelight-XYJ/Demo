@@ -1,0 +1,34 @@
+---
+title: "MeGeneReport"
+author: "yujia"
+date: "2019年6月3日"
+output: html_document
+params:
+  n: NA
+  zz: NA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## MeGene运动基因报告
+<font color=#00ffff size=3>**1.爆发力检测**</font>
+
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+```{r, echo=FALSE}
+params
+```
+

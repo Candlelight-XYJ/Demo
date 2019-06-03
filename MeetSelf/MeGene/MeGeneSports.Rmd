@@ -1,0 +1,65 @@
+---
+title: "MeGeneReport"
+author: "yujia"
+date: "2019年6月3日"
+output: html_document
+params:
+  suggestions : NA
+  relaKnowledge: NA
+  detectGenes: NA
+  detectRsId: NA
+  citations : NA
+encoding: "UTF-8"
+---
+
+# **MeGene 运动基因检测报告**
+
+**`检测项目`**
+
++ 耐力检测
++ 爆发力检测
++ 最大摄氧量检测
++ 运动获得减肥收益
++ 运动获得耐力收益
++ 腰椎间盘损伤风险
++ 跟腱损伤风险
++ 前交叉韧带损伤风险
++ 运动恢复能力
+
+---
+
+## <font color=#00ffff>**1.爆发力检测**</font>
+耐力是指身体进行长时间紧张体力活动的耐久能力，是一种重要的运动能力。在马拉松、滑雪等长时间中强度的耐力项目中，耐力尤为关键。除了后天的训练和营养之外，基因在耐力表现中也扮演重要角色。
+
+### **我的基因检测结果**
+```r
+耐力：中等
+```
+
+### **建议**
+```{r,echo=FALSE}
+params$suggestions
+```
+
+### **相关知识**
+```{r,echo=FALSE}
+params$relaKnowledge
+```
+
+### **检测的基因**
+```{r,echo=FALSE}
+params$detectGenes
+```
+
+### **rs位点**
+```{r,echo=FALSE}
+params$detectRsId
+```
+
+### **参考文献**
+```{r,echo=FALSE}
+params$citations
+```
+
+
+---

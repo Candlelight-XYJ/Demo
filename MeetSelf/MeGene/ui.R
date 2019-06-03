@@ -9,12 +9,7 @@ headerbar <- dashboardHeader(
   title = strong("MeGene 报告生成系统"),
   titleWidth = 270,
   dropdownMenu(
-    type = "notifications",
-    notificationItem(
-      text = "Plots might take some time to display",
-      icon("truck"),
-      status = "warning"
-    )
+    type = "notifications"
   )
 )
 
@@ -27,70 +22,66 @@ sidebar <- dashboardSidebar(
 home <- tabPanel(
   strong("运动基因报告"),icon = icon("home"),
   sidebarPanel(
-    selectizeInput("selectSpe", "Select Species", choices=c("human","mouse","rat"), selected = NULL, multiple = FALSE,
-                   options = NULL),
-    actionButton("searchGPL","Search",icon("search"),
+    fileInput("vcf", "输入VCF文件",
+              accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
+    actionButton("generateReport","生成报告",icon("begin"),
                  style="color: #fff; background-color: #104E8B; border-color: #1874CD"),
     br(),
     br(),
-    downloadButton("downloadGPL", "Download",icon("download"))
+    downloadButton("downloadReport", "下载报告")
   ),
   mainPanel(
     fluidRow(
       box(
         title = strong("运动基因"),width = 4,solidHeader = TRUE,status = "primary" , ##status is color
-        "Now,we have stored human, mouse, rat probe annotations"
+        "现在我们提供12个运动基因检测项目",
+        "定制专属于您的MeGene基因检测报告"
       ),
       valueBox(
-        "163",icon = icon("list"),color="light-blue",
-        strong("GPL annotations")
+        "100",icon = icon("list"),color="light-blue",
+        strong("SNP位点")
       )
     ),
     
     fluidRow(
-      DT::dataTableOutput("searchTable") 
-      #textOutput("searchTable")
-      
+     #includeMarkdown("MeGeneSports.Rmd")
     )
     
   )
-) 
+)
 
 
 ## body - pipeline
 pipeline <- tabPanel(
   strong("营养搭配推荐"), icon = icon("home"),
   sidebarPanel(
-    selectInput("probeFileType", "Probe Sequences File Type",
-                c(fasta = "fasta", csv = "csv")
-    ),
+    selectInput("selectNutrition", "选择营养指标",
+                c("水分" = "水分", "水分" = "油脂")
+    )
 
-    fileInput("gtf", "Choose GTF File",
-              accept = c("text/csv","text/comma-separated-values,text/plain",".csv")),
-    
     ## choose genome
     #  selectInput("genome", "Choose Genome File",
     #              c("Human Genome" = "humanGenome",
     #                "Mouse Genome" = "mouseGenome",
     #                "Rat Genome" = "ratGenome")),
     
-    shinyFilesButton("genome", "Choose a Genome file" ,
-                     title = "Please select a file:", multiple = FALSE,
-                     buttonType = "default", class = NULL),
-    textOutput("showGenomePath"),
-    br(),
-    actionButton("doAnnotate","Start Annotating",icon("play"),
-                 style="color: #fff; background-color: #104E8B; border-color: #1874CD"),
-    br(),
-    br(),
-    downloadButton("downloadAnno", "Download",icon("download"))
+    #shinyFilesButton("genome", "Choose a Genome file" ,
+    #                 title = "Please select a file:", multiple = FALSE,
+    #                 buttonType = "default", class = NULL),
+    #textOutput("showGenomePath"),
+    #br(),
+    #actionButton("doAnnotate","Start Annotating",icon("play"),
+    #             style="color: #fff; background-color: #104E8B; border-color: #1874CD"),
+    #br(),
+    #br(),
+    #downloadButton("downloadAnno", "Download",icon("download"))
   ),
   mainPanel(
     fluidRow(
       infoBoxOutput("progressBox",width=4)
     ),
     fluidRow(
-      h3("Developing  . . .")
+      h3("MeGene Developing  . . .")
     )
   ))
 
