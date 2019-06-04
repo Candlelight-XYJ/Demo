@@ -16,3 +16,11 @@
 
 ## read data from xlsx
 #geneInfo <- read.xlsx("E:/GitHub/Demo/MeetSelf/MeGene/data/geneinfo.xlsx")
+getSQLitedata <- function(querySQL){
+  sqlitePath <- "data/sportGenes.sqlite"
+  sportDB <- dbConnect(RSQLite::SQLite(), sqlitePath)
+  ##querySQL="select * from human_All_anno where gpl = \"GPL1352\" and biotype = \"protein\""
+  dat=dbGetQuery(sportDB, querySQL)
+  dbDisconnect(sportDB)
+  return(dat)
+}

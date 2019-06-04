@@ -9,11 +9,11 @@ output$report <- downloadHandler(
     file.copy("MeGeneSports.Rmd", tempReport, overwrite = TRUE)
     
     # Set up parameters to pass to Rmd document
-    params <- list(suggestions = globalValues$suggestions,
-                   relaKnowledge = globalValues$relaKnowledge,
-                   detectGenes = globalValues$detectGenes,
-                   detectRsId = globalValues$detectRsId,
-                   citations = globalValues$citations
+    params <- list(suggestions = sportValues$suggestions,
+                   relaKnowledge = sportValues$relaKnowledge,
+                   detectGenes = sportValues$detectGenes,
+                   detectRsId = sportValues$detectRsId,
+                   citations = sportValues$citations
                    )
     # Knit the document, passing in the `params` list, and eval it in a
     # child of the global environment (this isolates the code in the document
