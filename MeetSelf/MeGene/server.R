@@ -1,6 +1,7 @@
 library(shiny)
 library(openxlsx)
 library(rmarkdown)
+options(shiny.maxRequestSize = 100 * 1024^2)
 shinyServer(function(input, output,session) {
 
 sportValues <- reactiveValues(

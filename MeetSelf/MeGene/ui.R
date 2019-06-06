@@ -44,7 +44,11 @@ home <- tabPanel(
     ),
     
     fluidRow(
-     #includeMarkdown("MeGeneSports.Rmd")
+     #includeMarkdown("MeGeneIntro.md")
+      h3("欢迎来到MeGene报告生成系统，使用方法如下："),
+      p("step1:在左侧输入MeGene专享vcf格式文件"),
+      p("step2:点击生成报告，约等待10s"),
+      p("step3:点击下载报告 即可下载")
     )
     
   )
@@ -70,7 +74,7 @@ pipeline <- tabPanel(
 
 ## body - DEG
 DEG <- tabPanel(
-  "DEG",icon = icon("bar-chart-o"),
+  "系统使用说明",icon = icon("bar-chart-o"),
   mainPanel(
     
   )

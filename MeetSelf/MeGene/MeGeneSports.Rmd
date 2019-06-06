@@ -1,7 +1,7 @@
 ---
 title: "MeGeneReport"
 author: "yujia"
-date: "2019年6月3日"
+date: "2019.06.06"
 output: html_document
 params:
   suggestions : NA
@@ -28,17 +28,19 @@ encoding: "UTF-8"
 
 ---
 
-## <font color=#00ffff>**1.爆发力检测**</font>
+## <font color=#00ffff>**1.耐力检测**</font>
 耐力是指身体进行长时间紧张体力活动的耐久能力，是一种重要的运动能力。在马拉松、滑雪等长时间中强度的耐力项目中，耐力尤为关键。除了后天的训练和营养之外，基因在耐力表现中也扮演重要角色。
 
 ### **我的基因检测结果**
+
 ```r
 耐力：中等
 ```
 
+
 ### **建议**
 ```{r,echo=FALSE}
-params$suggestions
+params$suggestions 
 ```
 
 ### **相关知识**
@@ -53,13 +55,14 @@ params$detectGenes
 
 ### **rs位点**
 ```{r,echo=FALSE}
-params$detectRsId
+params$detectRsId 
 ```
 
 ### **参考文献**
 ```{r,echo=FALSE}
-params$citations
+params$citations 
 ```
 
 
----
+
+## 爆发力检测

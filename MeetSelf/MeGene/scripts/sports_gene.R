@@ -3,13 +3,13 @@
 ######################
 
 observeEvent(input$generateReport,{
-  if(!is.null(input$inputVcf)){
-    vcf <- read.csv(input$inputVcf,stringsAsFactors = F)
+  if(!is.null(input$inputVcf$datapath)){
+    vcf <- read.csv(input$inputVcf$datapath,stringsAsFactors = F)
     tmpUsr <- data.frame(rsId = vcf$ID, genotype = vcf$GenoType)
     sportGenesUsr <- tmpUsr[tmpUsr$rsId %in% SportGeneInfo$rsId,]
     ## remove replicated rows
     sportGenesUsr <- sportGenesUsr[!duplicated(sportGenesUsr),]
-    
+    reportSportGenes(sportGenesUsr)
   }
 
 })
@@ -20,28 +20,15 @@ reportSportGenes <- function(data){
   #querySQL2 <- paste0("select * from SportItem"," where rsId = ",shQuote(data$rsId))
   #geneInfo <- getSQLitedata(querySQL1)
   #sportItem <- getSQLitedata(querySQL2)
-  
-  
   mer1 <- merge(data,SportGeneInfo, by="rsId",all.x=T)
   mer2 <- merge(mer1,SportItem, by="rsId",all.x=T)
   
- for(i in 1:nrow(mer2)){
-    if(grep(mer2$alt[i], mer2$genotype[i]) ){
-      
-      sportValues$suggestions = NULL
-      sportValues$relaKnowledge = "zzz"
-      sportValues$detectGenes = NULL
-      sportValues$detectRsId = NULL
-      sportValues$citations = NULL
-      
-    }else{
-      
-      
-      
-    }
-    
-  }
-  
+  sportValues$suggestions = mer2$suggestion
+  sportValues$relaKnowledge = mer2$suggestion
+  sportValues$detectGenes = paste(mer2$gene," ",mer2$geneinfo)
+  sportValues$detectRsId = data$rsId
+  sportValues$citations = mer2$citation
+  print("ok")
 }
 
 

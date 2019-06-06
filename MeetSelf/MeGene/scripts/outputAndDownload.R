@@ -1,4 +1,4 @@
-output$report <- downloadHandler(
+output$downloadReport <- downloadHandler(
   # For PDF output, change this to "report.pdf"
   filename = "report.html",
   content = function(file) {
