@@ -24,6 +24,7 @@ observeEvent(input$doAnnotate,{
                ## build genome index
                if(F){
                ## if the genome index we have, then use the exist index  
+                 
                react_Values$bowtieIndex = paste0("/data/genome_index/",input$selectGenome)
                react_Values$samFile = getBowtieAlign(loadProbeSeq(),indexDir)
                react_Values$gtfFile = data.table::fread(paste0("/data/genome_index/",input$selectGTF),
@@ -37,16 +38,16 @@ observeEvent(input$doAnnotate,{
                react_Values$annoRes = getAnnotation(react_Values$Bam2GR,react_Values$gtf2GR)
                
                }else{
-               ## if input genome we don`t have index,then build index by Rbowtie
-               ## it may take a long time ---
-               progress$set(value = .1, detail = "Building index ...")
-               #setProgress(value = .1, detail = "Building index ...")   
-               react_Values$bowtieIndex = getBowtieIndex(loadUsrGenome())}
                  
-               ## set align progress
-               progress$set(value = 0.2, detail = "Aligning reads ...")
-               ## align reads
-               react_Values$samFile = getBowtieAlign(loadProbeSeq(),react_Values$bowtieIndex)
+               
+               # if check genome is True , then load customed genome file      
+               if(!is.null(input$genome$datapath)){
+                 ## set align progress
+                 progress$set(value = 0.2, detail = "Aligning reads ...")
+                 ## align reads
+                 react_Values$samFile = getBowtieAlign(loadProbeSeq(),react_Values$bowtieIndex)  
+               }   
+               
                
                ## set overlapping progress
                progress$set(value = 0.8, detail = "overlapping ...")
