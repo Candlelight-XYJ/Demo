@@ -55,15 +55,23 @@ output$progressBox <- renderInfoBox({
   }
   else if(input$doAnnotate > 0 & is.null(react_Values$annoRes) 
           | is.null(input$probeFileType) 
-          | is.null(input$gtf) 
-          | is.null(input$genome)){
+          | is.null(input$customedGTF) 
+          | is.null(input$customedGenome)
+          | is.null(input$selectGTF)
+          | is.null(input$selectGenome)){
     infoBox("Status",
             "Annotate Not Started Yet!",icon = icon("flag", lib = "glyphicon"),
             color = "aqua",
             fill = TRUE)
     
   }
-  else if(input$doAnnotate > 0 & is.null(react_Values$annoRes) & !is.null(input$probeFileType) & !is.null(input$gtf) & !is.null(input$genome)){
+  else if(input$doAnnotate > 0 & is.null(react_Values$annoRes) & !is.null(input$probeFileType) & !is.null(input$customedGTF) & !is.null(input$customedGenome)){
+    infoBox("Status",
+            "Annotating ... please wait!",icon = icon("flag", lib = "glyphicon"),
+            color = "red",
+            fill = TRUE)
+  }
+  else if(input$doAnnotate > 0 & is.null(react_Values$annoRes) & !is.null(input$probeFileType) & !is.null(input$selectGTF) & !is.null(input$selectGenome)){
     infoBox("Status",
             "Annotating ... please wait!",icon = icon("flag", lib = "glyphicon"),
             color = "red",
@@ -74,6 +82,13 @@ output$progressBox <- renderInfoBox({
             "Done!",icon = icon("thumbs-up", lib = "glyphicon"),
             color = "green",
             fill = TRUE) 
+  }else{
+    
+    infoBox("Status",
+            "Annotate Not Started Yet!",icon = icon("flag", lib = "glyphicon"),
+            color = "green",
+            fill = TRUE)  
+    
   }
 })
 
@@ -107,11 +122,12 @@ output$downloadGPL <- downloadHandler(
 output$plot_geneProbeRela <- renderPlot({
   if(!is.null(react_Values$annoRes)){
     df <- react_Values$annoRes
-    genePerProbeNum = df %>% dplyr::count(df[,12])
+    genePerProbeNum = df %>% dplyr::count(df[,ncol(df)])
+    head(df)
     colnames(genePerProbeNum) <- c("gene_symbol","probe_num")
     print(input$select_numRanges)
     tmp <- genePerProbeNum[order(genePerProbeNum$probe_num,decreasing = T),]
-    p <- ggplot(tmp[inputselect_numRanges[1]:input$select_numRanges[2],], aes(x = gene_symbol, y = probe_num)) +
+    p <- ggplot(tmp[input$select_numRanges[1]:input$select_numRanges[2],], aes(x = gene_symbol, y = probe_num)) +
       geom_bar(stat = "identity",fill = "lightblue", colour = "black")
     p <- p + theme(axis.text.x = element_text(size = 10, color = "black", vjust = 0.5, hjust = 0.5, angle = 90),panel.grid =element_blank(),panel.border = element_blank())
     p

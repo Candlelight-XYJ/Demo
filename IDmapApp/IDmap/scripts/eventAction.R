@@ -29,7 +29,6 @@ observeEvent(input$doAnnotate,{
                react_Values$samFile = getBowtieAlign(loadProbeSeq(),indexDir)
                react_Values$gtfFile = data.table::fread(paste0("/data/genome_index/",input$selectGTF),
                                                                     sep = "\t",skip="##",header = F)
-                 
                ## preprocess gtf files
                react_Values$gtf2GR = preprocessGTF(react_Values$gtfFile)
                ## Bam2Ranges  
@@ -37,25 +36,50 @@ observeEvent(input$doAnnotate,{
                ## get Annotation
                react_Values$annoRes = getAnnotation(react_Values$Bam2GR,react_Values$gtf2GR)
                
-               }else{
+               }
                  
                
-               # if check genome is True , then load customed genome file      
-               if(!is.null(input$genome$datapath)){
+               # if load customed genome file      
+               if(!is.null(as.character(parseFilePaths(volumes, input$customedGenome)$datapath))){
+                 
+                 ## it may take a long time ---
+                 progress$set(value = .1, detail = "Building index ...")
+                 ## build index
+                 react_Values$bowtieIndex = getBowtieIndex(loadUsrGenome())
                  ## set align progress
                  progress$set(value = 0.2, detail = "Aligning reads ...")
                  ## align reads
                  react_Values$samFile = getBowtieAlign(loadProbeSeq(),react_Values$bowtieIndex)  
+              
+                }else{
+                 ## access index stored in Server
+                 react_Values$bowtieIndex = paste0("/data/genome_index/",input$selectGenome)
+                 ## align reads
+                 react_Values$samFile = getBowtieAlign(loadProbeSeq(),react_Values$bowtieIndex)
                }   
                
-               
+  
+               ## if load customed gtf file 
+               if(!is.null(input$customedGTF$datapath)){
+                 ## set overlapping progress
+                 progress$set(value = 0.8, detail = "overlapping ...")
+                 ## preprocess gtf files
+                 react_Values$gtf2GR = preprocessGTF(loadUsrGTF()) 
+                 
+               }else{
+                 ## access gtf files stored in Server
+                 react_Values$gtfFile = data.table::fread(paste0("/data/genome_index/",input$selectGTF),
+                                                          sep = "\t",skip="##",header = F)
+                 ## preprocess gtf files
+                 react_Values$gtf2GR = preprocessGTF(react_Values$gtfFile)
+               }
+                 
                ## set overlapping progress
                progress$set(value = 0.8, detail = "overlapping ...")
-               ## preprocess gtf files
-               react_Values$gtf2GR = preprocessGTF(loadUsrGTF())
                
                ## Bam2Ranges  
                react_Values$Bam2GR = convertBamToGR(react_Values$samFile)  
+               
                ## get Annotation
                react_Values$annoRes = getAnnotation(react_Values$Bam2GR,react_Values$gtf2GR)
                

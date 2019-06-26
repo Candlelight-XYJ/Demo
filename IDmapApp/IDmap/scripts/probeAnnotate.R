@@ -34,6 +34,12 @@ preprocessGTF <- function(gtf){
                   sep = ";")
   my_gene <- separate(tmp, col = gene_name, into = c("zz", "gene_name"), sep = "gene_name", 
                       quote = F)
+  ## delete quotes in gene symbol
+  gene_name <- str_replace(my_gene$gene_name,"\"","")
+  gene_name <- str_replace(gene_name,"\"","")
+  gene_name <- str_trim(gene_name)
+  my_gene$gene_name <- gene_name
+  
   gtf2GR <- with(my_gene, GRanges(V1, IRanges(V4, V5), V7, id = gene_name))
   return(gtf2GR)
 }
@@ -63,6 +69,9 @@ getAnnotation <- function(Bam2GR,gtf2GR){
   o = findOverlaps(Bam2GR, gtf2GR)
   lo = cbind(as.data.frame(Bam2GR[queryHits(o)]), as.data.frame(gtf2GR[subjectHits(o)]))
   # head(lo)
+  colnames(lo) <- c("probe_chr", "probe_start" ,"probe_end","probe_width","probe_strand" 
+                    ,"probe_id" ,"gencode_chr","gencode_start" ,"gencode_end" 
+                    ,"gencode_width","gencode_strand","gene_name")
   return(lo)
 }
 
