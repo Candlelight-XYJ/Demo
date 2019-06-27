@@ -53,7 +53,7 @@ observeEvent(input$doAnnotate,{
               
                 }else{
                  ## access index stored in Server
-                 react_Values$bowtieIndex = paste0("/data/genome_index/",input$selectGenome)
+                 react_Values$bowtieIndex = paste0("/genome_index/",input$selectGenome,"/")
                  ## align reads
                  react_Values$samFile = getBowtieAlign(loadProbeSeq(),react_Values$bowtieIndex)
                }   
@@ -68,10 +68,11 @@ observeEvent(input$doAnnotate,{
                  
                }else{
                  ## access gtf files stored in Server
-                 react_Values$gtfFile = data.table::fread(paste0("/data/genome_index/",input$selectGTF),
-                                                          sep = "\t",skip="##",header = F)
+                 react_Values$gtfFile = data.table::fread(paste0("/gtf/",input$selectGTF),
+                                                          sep = "\t",header = F)
+                  
                  ## preprocess gtf files
-                 react_Values$gtf2GR = preprocessGTF(react_Values$gtfFile)
+                 react_Values$gtf2GR = processStoredGTF(react_Values$gtfFile)
                }
                  
                ## set overlapping progress

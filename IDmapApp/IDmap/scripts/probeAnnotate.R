@@ -44,6 +44,12 @@ preprocessGTF <- function(gtf){
   return(gtf2GR)
 }
 
+
+processStoredGTF <- function(gtf){
+  gtf2GR <- with(gtf, GRanges(V1, IRanges(V2, V3), V4, id = V7))
+  return(gtf2GR)
+}
+
 #############################################
 ## step4 - convert bam into Ranges Object  ##
 #############################################

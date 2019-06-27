@@ -23,10 +23,10 @@ output$searchTable <- DT::renderDataTable({
     #                             "&position=",  tmp1$chrom,":",tmp1$start-1000,"-",tmp1$end+1000
     #)
     #,'UCSC')
-    
+    return(tmp1) 
   }
   
-  return(tmp1)
+  
 })
 
 
@@ -34,7 +34,7 @@ output$searchTable <- DT::renderDataTable({
 output$annotable <- DT::renderDataTable({
   if(!is.null(react_Values$annoRes)){
     showAnnoRes <- react_Values$annoRes[,c(6,1,2,3,5,12)]
-    colnames(showAnnoRes)=c("probe_id","chr","start","end","strand","gene_symbol")
+    #colnames(showAnnoRes)=c("probe_id","chr","start","end","strand","gene_symbol")
     showAnnoRes
   }
 })
