@@ -46,6 +46,7 @@ observeEvent(input$doAnnotate,{
                  progress$set(value = .1, detail = "Building index ...")
                  ## build index
                  react_Values$bowtieIndex = getBowtieIndex(loadUsrGenome())
+                 #print(react_Values$bowtieIndex)
                  ## set align progress
                  progress$set(value = 0.2, detail = "Aligning reads ...")
                  ## align reads
@@ -53,7 +54,8 @@ observeEvent(input$doAnnotate,{
               
                 }else{
                  ## access index stored in Server
-                 react_Values$bowtieIndex = paste0("/genome_index/",input$selectGenome,"/")
+                 react_Values$bowtieIndex = loadStoredGenome()
+               
                  ## align reads
                  react_Values$samFile = getBowtieAlign(loadProbeSeq(),react_Values$bowtieIndex)
                }   
@@ -68,11 +70,11 @@ observeEvent(input$doAnnotate,{
                  
                }else{
                  ## access gtf files stored in Server
-                 react_Values$gtfFile = data.table::fread(paste0("/gtf/",input$selectGTF),
-                                                          sep = "\t",header = F)
+                 ## set overlapping progress
+                 progress$set(value = 0.8, detail = "overlapping ...")
                   
                  ## preprocess gtf files
-                 react_Values$gtf2GR = processStoredGTF(react_Values$gtfFile)
+                 react_Values$gtf2GR = processStoredGTF(loadStoredGTF())
                }
                  
                ## set overlapping progress

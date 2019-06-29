@@ -7,6 +7,10 @@ output$viewBed <- renderPlot({
   
 })
 
+#output$bowtie <- renderText({
+#  react_Values$bowtieIndex
+#})
+
 #output$searchTable = DT::renderDataTable({
 #  return(head(react_Values$searchRes))
 #})
