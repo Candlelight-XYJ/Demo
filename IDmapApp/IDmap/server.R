@@ -62,23 +62,42 @@ loadProbeSeq <- reactive({
 #    return(nrow(seq))
 #})
 
-#output$showIDnum <- renderText(
-#  computeIDnum())  
-  
 
-## Load Genome
+## Load Customed Genome
 loadUsrGenome <- reactive({
-   shinyFileChoose(input, "genome", roots = volumes, session = session)
-   req(as.character(parseFilePaths(volumes, input$genome)$datapath))
+   shinyFileChoose(input, "customedGenome", roots = volumes, session = session)
+   req(as.character(parseFilePaths(volumes, input$customedGenome)$datapath))
 })
 output$showGenomePath <- renderText(loadUsrGenome())
     
-## Load GTF
+## Load Customed GTF
 loadUsrGTF <- reactive({
-   req(input$gtf)
-   gtfFile <- data.table::fread(input$gtf$datapath, sep = "\t"
+   req(input$customedGTF)
+   gtfFile <- data.table::fread(input$customedGTF$datapath, sep = "\t"
                                 ,skip="##",header = F)
    return(gtfFile)
+})
+
+
+######################################
+#### Load files from stored files #### 
+######################################
+
+## Load Stored Genome File
+loadStoredGenome <- reactive({
+  paste0("/genome_index/",input$selectGenome)
+})
+output$showBowtiePath <- renderText(loadStoredGenome())
+
+
+## Load Stored GTF File
+loadStoredGTF <- reactive({
+  req(input$selectGTF)
+  if(is.null(input$customedGTF$datapath)){
+  gtfFile <- data.table::fread(paste0("/gtf/",input$selectGTF),
+                               sep = "\t",header = F)
+  return(gtfFile)
+  }
 })
     
     

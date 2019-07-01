@@ -87,7 +87,7 @@ pipeline <- tabPanel(
         fileInput("inputCsv", "Choose .CSV table",
                   accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))
       ),
-    textOutput("showIDnum"),
+    #textOutput("showIDnum"),
    
    ## input GTF 
    # fileInput("gtf", "Choose GTF File",
@@ -97,14 +97,14 @@ pipeline <- tabPanel(
    
    ## choose GTF file  
    selectizeInput("selectGTF", "Select GTF File", 
-                  choices=c("human" = "human" 
-                            ,"mouse"="mouse"
+                  choices=c("gencode_human_v30.gtf" = "gencode_human_v30.gtf" 
+                            ,"gencode_mouse_v21.gtf"="gencode_mouse_v21.gtf"
                             ,"rat"="rat",
                             "other" = "other"), selected = NULL, multiple = FALSE,options = NULL),
    checkboxInput("checkGTF", "I want to input customed GTF", FALSE),
    conditionalPanel(
      condition = "input.checkGTF",
-     fileInput("gtf", "Load your GTF file",
+     fileInput("customedGTF", "Load your GTF file",
                       accept = c("text/csv","text/comma-separated-values,text/plain",".csv"))
    ),
    ## choose genome
@@ -116,15 +116,17 @@ pipeline <- tabPanel(
   checkboxInput("checkGenome", "I want to input customed Genome", FALSE),  
   conditionalPanel(
     condition = "input.checkGenome",
-    shinyFilesButton("genome", "Load your Genome file" ,
+    shinyFilesButton("customedGenome", "Load your Genome file" ,
                      title = "Please select a file:", multiple = FALSE,
                      buttonType = "default", class = NULL),
     textOutput("showGenomePath")
+    
   ),
   #shinyFilesButton("genome", "Choose a Genome file" ,
   #                 title = "Please select a file:", multiple = FALSE,
   #                 buttonType = "default", class = NULL),
   #textOutput("showGenomePath"),
+  textOutput("showBowtiePath"),
   
   br(),
   actionButton("doAnnotate","Start Annotating",icon("play"),
@@ -141,6 +143,7 @@ pipeline <- tabPanel(
     box(title = strong("annotation results"), status = "primary",
     DT::dataTableOutput("annotable"),
     textOutput(strong("no_results")))
+  
    ),
    fluidRow(
       box(title = strong("Probe Sets"), status = "primary",plotOutput("plot_geneProbeRela"),
