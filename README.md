@@ -1,2 +1,2 @@
 # Demo
-small demo for my practice
+small demo for my practices
