@@ -1,5 +1,5 @@
 ---
-title: "IDmap:An R/Biconductor package"
+title: "IDmap:An R/Bioconductor package"
 author: "Yujia Xiang & Jianming Zeng"
 date: "`r Sys.Date()`"
 #bibliography: IDmap.bib
