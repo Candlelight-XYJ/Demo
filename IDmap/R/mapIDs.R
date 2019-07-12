@@ -1,6 +1,6 @@
 ########################################
 ##                                    ##
-## code last update: June 25, 2019    ##
+## code last update: July 12, 2019    ##
 ##                                    ##
 ########################################
 
@@ -14,7 +14,7 @@
 ##' @examples
 ##' probeids <- c("A_23_P101521","A_33_P3695548","A_33_P3266889")
 ##' gplnum <- "GPL10332"
-##' humanAnno <- getAnno(gplnum,source, biotype,lncRNA)
+##' humanAnno <- getAnno(gplnum)
 ##' head(humanAnno)
 ##' @export
 getAnno <- function(gplnum, source="pipe", biotype="protein_coding", lncRNA=F){
@@ -27,6 +27,7 @@ getAnno <- function(gplnum, source="pipe", biotype="protein_coding", lncRNA=F){
          or you can use function `getGPLsoft()` to download soft annotations from GEO \t
          or you can use our shinyAPP to custom annotate your probe sequences!")
   }
+  gplList <- getGPLlist()
   ## check species
   species <- switch(gplList[gplList$gpl == gplnum, 3],
                     "Homo sapiens" = "human" ,
@@ -61,15 +62,18 @@ getAnno <- function(gplnum, source="pipe", biotype="protein_coding", lncRNA=F){
 
 ##' Mapping probeIds to gene symbols
 ##'
-##' \code{probeIdmap} returns a list of gene ids for the input probe ids.input
+##' \code{probeIdmap} returns a list of gene ids for the input probe ids
 ##' @param probeids,gplnum,biotype,source
 ##'
 ##' @return if the input dataset is in our platform list(see our manual) ,then the output will be a dataframe,
 ##' which includes a list of gene ids mapping to probe ids
 ##'
 ##' @example
-##' probeids <- c("A_23_P101521","A_33_P3695548","A_33_P3266889")
+##' probeids <- c("A_23_P101521","A_33_P3695548","A_33_P3266889","A_33_P3266886")
 ##' gplnum <- "GPL10332"
+##' source <- "pipe"
+##' biotypr <- "protein_coding"
+##' lncRNA <- FALSE
 ##' datasets <- getAnno(gplnum,source, biotype,lncRNA)
 ##' mapRes <- probeIdmap(probeids, datasets)
 ##' head(mapRes)
@@ -78,8 +82,13 @@ probeIdmap <- function(probeids, datasets){
   if (missing(probeids)){
     stop("No valid probeids passed in !")
   }
-  ## ids mapping result
+  ## ids mapping results
   res <- datasets[match(probeids,datasets$probe_id),]
+  missIds <- probeids[!(probeids %in% res$probe_id)]
+  if(length(missIds)!=0){
+   warning(paste0("probeid ",missIds ," are missing in datasets \n"))
+  }
+
   rownames(res) <- NULL
   return(res)
 }
