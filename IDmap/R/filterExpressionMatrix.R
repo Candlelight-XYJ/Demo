@@ -7,28 +7,27 @@
 ##' Filter expression matrix
 ##'
 ##' \code{filterEM} returns
-##' @param matrix
-##' @param
+##' @param dat dat is a expression matrix,which the first col must be probe ids and the second col must be gene symbols or entrez ids. Other cols should be expression values .
 ##'
-##' @return
+##' @return filter ids expression ma
 ##'
 ##' @examples
+##' probeid <- c("A_23_P101521","A_33_P3695548","A_33_P3266889")
+##' symbol <- c("symbol1","symbol2","s)
+##' dat <- data.frame
 ##' @export
-filterEM <- function(matrix,probeIdCol,){
-
-
-
-
+filterEM <- function(dat){
+  # computing median values of expression matrix
+  dat$EMmedian <- apply(dat,1,median)
+  # select probe ids, gene symbols and median values from dat
+  ids <- with(dat,probeid=dat[,1],symbol=dat[,2],median=EMmedian)
+  # ordering matrix by median values
+  ids=ids[order(ids$median,decreasing = T),]
+  # filter duplicated symbols
+  ids <- ids[!duplicated(ids$symbol),]
+  res <- dat[which(dat[,1] %in% ids$probeid),]
+  return(res)
 }
-
-#dat[1:4,1:4]
-dat=dat[ids$probe_id,]
-ids$median=apply(dat,1,median) #ids新建median这一列，列名为median，同时对dat这个矩阵按行操作，取每一行的中位数，将结果给到median这一列的每一行
-ids=ids[order(ids$symbol,ids$median,decreasing = T),]#对ids$symbol按照ids$median中位数从大到小排列的顺序排序，将对应的行赋值为一个新的ids
-ids=ids[!duplicated(ids$symbol),]#将symbol这一列取取出重复项，'!'为否，即取出不重复的项，去除重复的gene ，保留每个基因最大表达量结果s
-dat=dat[ids$probe_id,] #新的ids取出probe_id这一列，将dat按照取出的这一列中的每一行组成一个新的dat
-rownames(dat)=ids$symbol#把ids的symbol这一列中的每一行给dat作为dat的行名
-dat[1:4,1:4]  #保留每个基因ID第一次出现的信息
 
 
 
