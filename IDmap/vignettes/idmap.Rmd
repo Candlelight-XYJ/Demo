@@ -7,7 +7,7 @@ date: "`r Sys.Date()`"
 output:
   prettydoc::html_pretty:
     toc: true
-    theme: cayman
+    theme: tactile
     highlight: github
   pdf_document:
     toc: true
@@ -82,8 +82,17 @@ For more details, please visit the website.
 
 ## 5. Other Functions
 
-Developing ...
-
+#### 5.1 filterExpressionMatrix
+```{r}
+#eMatrix <- system.file("extdata", "matrixData.Rdata", package="IDmap")
+#allMapIds <- system.file("extdata", "probe2gene.Rdata", package="IDmap")
+#load(eMatrix)
+#load(allMapIds)
+## head(matrixData)
+## head(probe2gene)
+#res <- filterEM(matrixData,probe2gene,omitNA=T)
+#head(res)
+```
 
 ## 6. Data Mining with microarray data deposited in GEO
 
