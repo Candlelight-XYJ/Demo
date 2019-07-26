@@ -40,7 +40,7 @@ observeEvent(input$doAnnotate,{
                  
                
                # if load customed genome file      
-               if(!is.null(as.character(parseFilePaths(volumes, input$customedGenome)$datapath))){
+               if(input$checkGenome && (!is.null(as.character(parseFilePaths(volumes, input$customedGenome)$datapath)))){
                  
                  ## it may take a long time ---
                  progress$set(value = .1, detail = "Building index ...")
@@ -62,7 +62,7 @@ observeEvent(input$doAnnotate,{
                
   
                ## if load customed gtf file 
-               if(!is.null(input$customedGTF$datapath)){
+               if(input$checkGTF && (!is.null(input$customedGTF$datapath))){
                  ## set overlapping progress
                  progress$set(value = 0.8, detail = "overlapping ...")
                  ## preprocess gtf files

@@ -85,7 +85,9 @@ loadUsrGTF <- reactive({
 
 ## Load Stored Genome File
 loadStoredGenome <- reactive({
-  paste0("/genome_index/",input$selectGenome)
+  ## use absolute path instead of relative path
+  indexPath <- paste0(getwd(),"/genome_index/",input$selectGenome)
+  return(indexPath)
 })
 output$showBowtiePath <- renderText(loadStoredGenome())
 
@@ -94,7 +96,8 @@ output$showBowtiePath <- renderText(loadStoredGenome())
 loadStoredGTF <- reactive({
   req(input$selectGTF)
   if(is.null(input$customedGTF$datapath)){
-  gtfFile <- data.table::fread(paste0("/gtf/",input$selectGTF),
+  ## use absolute path instead of relative path
+  gtfFile <- data.table::fread(paste0(getwd(),"/gtf/",input$selectGTF),
                                sep = "\t",header = F)
   return(gtfFile)
   }

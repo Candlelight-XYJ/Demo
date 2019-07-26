@@ -54,8 +54,12 @@ home <- tabPanel(
         "Now,we have stored human, mouse, rat probe annotations"
       ),
       valueBox(
-        "163",icon = icon("list"),color="light-blue",
+        "146",icon = icon("list"),color="light-blue",
         strong("GPL annotations")
+      ),
+      valueBox(
+        "Per 3 months",icon = icon("list"),color="light-blue",
+        strong("Updating")
       )
     ),
     
@@ -98,7 +102,7 @@ pipeline <- tabPanel(
    ## choose GTF file  
    selectizeInput("selectGTF", "Select GTF File", 
                   choices=c("gencode_human_v30.gtf" = "gencode_human_v30.gtf" 
-                            ,"gencode_mouse_v21.gtf"="gencode_mouse_v21.gtf"
+                            ,"gencode_mouse_v21.gtf" = "gencode_mouse_v21.gtf"
                             ,"rat"="rat",
                             "other" = "other"), selected = NULL, multiple = FALSE,options = NULL),
    checkboxInput("checkGTF", "I want to input customed GTF", FALSE),
@@ -178,8 +182,8 @@ DEG <- tabPanel(
 ## body - Help&About Us
 
 about <- tabPanel(
-  "Help & About Us",icon = icon("table")
-  # ,includeMarkdown("help.Rmarkdown") 
+  "Help & About Us",icon = icon("table"),
+  includeMarkdown("help.Rmarkdown") 
 )
 
 
