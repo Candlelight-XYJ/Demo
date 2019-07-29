@@ -117,15 +117,17 @@ pipeline <- tabPanel(
                   "Mouse Genome" = "mouse",
                   "Rat Genome" = "rat")),
    
-  checkboxInput("checkGenome", "I want to input customed Genome", FALSE),  
-  conditionalPanel(
-    condition = "input.checkGenome",
-    shinyFilesButton("customedGenome", "Load your Genome file" ,
-                     title = "Please select a file:", multiple = FALSE,
-                     buttonType = "default", class = NULL),
-    textOutput("showGenomePath")
-    
-  ),
+  # upload customed Genome 
+  #checkboxInput("checkGenome", "I want to input customed Genome", FALSE),  
+  #conditionalPanel(
+  #  condition = "input.checkGenome",
+  #  shinyFilesButton("customedGenome", "Load your Genome file" ,
+  #                   title = "Please select a file:", multiple = FALSE,
+  #                   buttonType = "default", class = NULL),
+  #  textOutput("showGenomePath")
+  #),
+  
+  
   #shinyFilesButton("genome", "Choose a Genome file" ,
   #                 title = "Please select a file:", multiple = FALSE,
   #                 buttonType = "default", class = NULL),
