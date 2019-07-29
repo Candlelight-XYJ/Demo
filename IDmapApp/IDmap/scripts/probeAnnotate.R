@@ -16,7 +16,7 @@ getBowtieAlign <- function(probeSeq, indexDir){
   ## use tempfile to save sam files created by bowtie
   samFile <- tempfile()
   ## align probe sequences to genome
-  Rbowtie::bowtie(sequences = readsFiles, index = file.path(indexDir, "index"), outfile = samFile, 
+  Rbowtie::bowtie(sequences = readsFiles, index = file.path(indexDir, input$selectGenome), outfile = samFile, 
                   type = "single", S = TRUE, f = TRUE, n = 0, force = TRUE)
   return(samFile)
 }

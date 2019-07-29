@@ -60,7 +60,6 @@ output$progressBox <- renderInfoBox({
   else if(input$doAnnotate > 0 & is.null(react_Values$annoRes) 
           | is.null(input$probeFileType) 
           | is.null(input$customedGTF) 
-          | is.null(input$customedGenome)
           | is.null(input$selectGTF)
           | is.null(input$selectGenome)){
     infoBox("Status",
@@ -69,7 +68,7 @@ output$progressBox <- renderInfoBox({
             fill = TRUE)
     
   }
-  else if(input$doAnnotate > 0 & is.null(react_Values$annoRes) & !is.null(input$probeFileType) & !is.null(input$customedGTF) & !is.null(input$customedGenome)){
+  else if(input$doAnnotate > 0 & is.null(react_Values$annoRes) & !is.null(input$probeFileType) & !is.null(input$customedGTF)){
     infoBox("Status",
             "Annotating ... please wait!",icon = icon("flag", lib = "glyphicon"),
             color = "red",
@@ -156,7 +155,7 @@ output$plot_geneProbeRela <- renderPlot({
 
 ##### Visual probe mapping results
 
-
+if(F){
 output$plot_probeMapping <- renderPlot({
   if(!is.null(react_Values$Bam2GR)){
     chrom = paste0("chr",input$select_chr)
@@ -197,7 +196,7 @@ output$plot_probeMapping <- renderPlot({
   
   
 })
-
+}
 
 #zz <- read.csv("probeAnnotations.csv")
 #plotBed(beddata = zz,chrom = c("chr1","chr2"),chromstart = 1,

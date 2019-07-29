@@ -37,10 +37,10 @@ observeEvent(input$doAnnotate,{
                react_Values$annoRes = getAnnotation(react_Values$Bam2GR,react_Values$gtf2GR)
                
                }
-                 
                
-               # if load customed genome file      
-               if(input$checkGenome && (!is.null(as.character(parseFilePaths(volumes, input$customedGenome)$datapath)))){
+               # if load customed genome file
+               if(F){
+                if(input$checkGenome && (!is.null(as.character(parseFilePaths(volumes, input$customedGenome)$datapath)))){
                  
                  ## it may take a long time ---
                  progress$set(value = .1, detail = "Building index ...")
@@ -51,16 +51,15 @@ observeEvent(input$doAnnotate,{
                  progress$set(value = 0.2, detail = "Aligning reads ...")
                  ## align reads
                  react_Values$samFile = getBowtieAlign(loadProbeSeq(),react_Values$bowtieIndex)  
+                 }
+                }
+                 
+               ## access index stored in Server
+               react_Values$bowtieIndex = loadStoredGenome()
+               
+               ## align reads
+               react_Values$samFile = getBowtieAlign(loadProbeSeq(),react_Values$bowtieIndex)
               
-                }else{
-                 ## access index stored in Server
-                 react_Values$bowtieIndex = loadStoredGenome()
-               
-                 ## align reads
-                 react_Values$samFile = getBowtieAlign(loadProbeSeq(),react_Values$bowtieIndex)
-               }   
-               
-  
                ## if load customed gtf file 
                if(input$checkGTF && (!is.null(input$customedGTF$datapath))){
                  ## set overlapping progress
