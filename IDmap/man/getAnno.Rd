@@ -17,6 +17,8 @@ getAnno(gplnum, source = "pipe", biotype = "protein_coding",
 \code{getAnno} returns annotations for target gpl
 }
 \examples{
-humanAnno <- getAnno(gplnum,source, biotype,lncRNA)
+probeids <- c("A_23_P101521","A_33_P3695548","A_33_P3266889")
+gplnum <- "GPL10332"
+humanAnno <- getAnno(gplnum)
 head(humanAnno)
 }

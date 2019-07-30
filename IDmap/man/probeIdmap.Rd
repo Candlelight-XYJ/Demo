@@ -4,7 +4,7 @@
 \alias{probeIdmap}
 \title{Mapping probeIds to gene symbols}
 \usage{
-probeIdmap(probeids, gplnum, source, biotype, lncRNA)
+probeIdmap(probeids, datasets)
 }
 \arguments{
 \item{probeids, gplnum, biotype, source}{}
@@ -14,5 +14,5 @@ if the input dataset is in our platform list(see our manual) ,then the output wi
 which includes a list of gene ids mapping to probe ids
 }
 \description{
-\code{probeIdmap} returns a list of gene ids for the input probe ids.input
+\code{probeIdmap} returns a list of gene ids for the input probe ids
 }

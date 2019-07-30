@@ -1,5 +1,5 @@
 ---
-title: "IDmap:An R/Bioconductor package"
+title: "IDmap:An R/Bioconductor package for probe annotaions"
 author: "Yujia Xiang & Jianming Zeng"
 date: "`r Sys.Date()`"
 #bibliography: IDmap.bib
@@ -7,7 +7,7 @@ date: "`r Sys.Date()`"
 output:
   prettydoc::html_pretty:
     toc: true
-    theme: tactile
+    theme: tactile # cayman, hpstr, leonids, tactile
     highlight: github
   pdf_document:
     toc: true
