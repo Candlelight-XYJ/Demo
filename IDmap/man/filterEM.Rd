@@ -4,10 +4,10 @@
 \alias{filterEM}
 \title{Filter expression matrix}
 \usage{
-filterEM(matrix, probe2gene, omitNA = T)
+filterEM(eMatrix, probe2gene, omitNA = T)
 }
 \arguments{
-\item{matrix}{is an expression matrix which rownames are probe ids and every column is a sample}
+\item{eMatrix}{is an expression matrix which rownames are probe ids and every column is a sample}
 
 \item{probe2gene}{is a data frame which includes probe ids and corresponding gene Symbols}
 

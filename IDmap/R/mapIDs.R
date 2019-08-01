@@ -54,16 +54,20 @@ getAnno <- function(gplnum, source="pipe", biotype="protein_coding", lncRNA=F){
   #sourceFilter <- sourceFilter[!duplicated(sourceFilter),]
   #head(sourceFilter)
   ## filter annotations by biotype
+  if(biotype != "all"){
   biotypeFilter <- eval(parse(text=paste0("sourceFilter[sourceFilter$biotype==","\'",biotype,"\'",",]")))
   biotypeFilter <- biotypeFilter[,-ncol(biotypeFilter)]
   biotypeFilter <- biotypeFilter[!duplicated(biotypeFilter),]
   return(biotypeFilter)
+  }else{
+  return(sourceFilter)
+  }
 }
 
 ##' Mapping probeIds to gene symbols
 ##'
 ##' \code{probeIdmap} returns a list of gene ids for the input probe ids
-##' @param probeids,gplnum,biotype,source
+##' @param probeids,datasets
 ##'
 ##' @return if the input dataset is in our platform list(see our manual) ,then the output will be a dataframe,
 ##' which includes a list of gene ids mapping to probe ids
@@ -87,6 +91,7 @@ probeIdmap <- function(probeids, datasets){
   missIds <- probeids[!(probeids %in% res$probe_id)]
   if(length(missIds)!=0){
    warning(paste0("probeid ",missIds ," are missing in datasets \n"))
+   write.csv(missIds,file=paste0(getwd(),"/missing-probe-ids-",Sys.time()))
   }
 
   rownames(res) <- NULL

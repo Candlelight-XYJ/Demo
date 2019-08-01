@@ -7,7 +7,7 @@
 probeIdmap(probeids, datasets)
 }
 \arguments{
-\item{probeids, gplnum, biotype, source}{}
+\item{probeids, datasets}{}
 }
 \value{
 if the input dataset is in our platform list(see our manual) ,then the output will be a dataframe,
