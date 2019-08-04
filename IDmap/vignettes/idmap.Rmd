@@ -1,5 +1,5 @@
 ---
-title: "IDmap:An R/Bioconductor package for probe annotaions"
+title: "AnnoProbe : An R/Bioconductor package for probe annotating"
 author: "Yujia Xiang & Jianming Zeng"
 date: "`r Sys.Date()`"
 #bibliography: IDmap.bib
