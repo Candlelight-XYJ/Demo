@@ -1,6 +1,6 @@
 ########################################
 ##                                    ##
-## code last update: July 13, 2019    ##
+## code last update: August 06, 2019  ##
 ##                                    ##
 ########################################
 
@@ -82,18 +82,19 @@ getAnno <- function(gplnum, source="pipe", biotype="protein_coding", lncRNA=F){
 ##' mapRes <- probeIdmap(probeids, datasets)
 ##' head(mapRes)
 ##' @export
-probeIdmap <- function(probeids, datasets){
+probeIdmap <- function(probeids, datasets, probeIdcol){
   if (missing(probeids)){
     stop("No valid probeids passed in !")
   }
   ## ids mapping results
-  res <- datasets[match(probeids,datasets$probe_id),]
-  missIds <- probeids[!(probeids %in% res$probe_id)]
+  res <- datasets[match(probeids,eval(parse(text = paste0("datasets$",probeIdcol)))),]
+  missIds <- probeids[!(probeids %in% eval(parse(text = paste0("res$",probeIdcol))))]
   if(length(missIds)!=0){
-   warning(paste0("probeid ",missIds ," are missing in datasets \n"))
-   write.csv(missIds,file=paste0(getwd(),"/missing-probe-ids-",Sys.time()))
+   warning(
+     paste0("probeid ",missIds ," are missing in datasets \n")
+     # write.csv(missIds, file = paste0(getwd(), "/missing-probe-ids-", Sys.time()))
+     )
   }
-
   rownames(res) <- NULL
   return(res)
 }

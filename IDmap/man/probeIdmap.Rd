@@ -4,7 +4,7 @@
 \alias{probeIdmap}
 \title{Mapping probeIds to gene symbols}
 \usage{
-probeIdmap(probeids, datasets)
+probeIdmap(probeids, datasets, probeIdcol)
 }
 \arguments{
 \item{probeids, datasets}{}
