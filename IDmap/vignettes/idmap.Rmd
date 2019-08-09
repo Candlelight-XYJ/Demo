@@ -57,8 +57,9 @@ gplnum <- "GPL10332"
 ```
 
 ## 3. Converting probeids to gene symbols
-Fuction `probeIdmap` converts probeids to gene symbols
+Function `probeIdmap` converts probeids to gene symbols
 
+Notes: This function will lose the probe ids that are missing from the gene annotation
 ```{r}
 probeids <- c("A_23_P101521","A_33_P3695548","A_33_P3266889")
 gplnum <- "GPL10332"
