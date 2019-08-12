@@ -1,8 +1,8 @@
-########################################
-##                                    ##
-## code last update: July 25, 2019    ##
-##                                    ##
-########################################
+##########################################
+##                                      ##
+## code last update: August 12, 2019    ##
+##                                      ##
+##########################################
 
 ##' Filter expression matrix
 ##'
@@ -10,7 +10,7 @@
 ##' @param eMatrix is an expression matrix which rownames are probe ids and every column is a sample
 ##' @param probe2gene is a data frame which includes probe ids and corresponding gene Symbols
 ##' @param omitNA omit NA symbol rows in matrix
-##' @return filter ids expression ma
+##' @return filter duplicated gene symbols expression
 ##'
 ##' @examples
 ##' eMatrix <- system.file("extdata", "matrixData.Rdata", package="IDmap")

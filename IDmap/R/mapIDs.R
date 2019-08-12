@@ -1,24 +1,34 @@
 ########################################
 ##                                    ##
-## code last update: August 06, 2019  ##
+## code last update: August 12, 2019  ##
 ##                                    ##
 ########################################
 
 ##' Get Annotation
 ##'
 ##' \code{getAnno} returns annotations for target gpl
-##' @param gplnum,source,biotype,lncRNA
-##'
-##' @return
+##' @param gplnum GPL(GEO platform) number, eg: GPL570
+##' @param source source of probe anntation stored, one of "pipe", "bioc", "soft", "all"
+##' @param biotype GENCODE biotypes,eg:"protein_coding","non_coding","pseudogene" ...
+##' @param lncRNA default is FALSE,lncRNA microarrays only have pipe annotation, if choose lncRNA microarray, the parameter must set as TRUE
+##' @return probe annotaions
 ##'
 ##' @examples
-##' probeids <- c("A_23_P101521","A_33_P3695548","A_33_P3266889")
 ##' gplnum <- "GPL10332"
-##' humanAnno <- getAnno(gplnum)
+##' source <- "pipe"
+##' biotype <- "protein_coding"
+##' humanAnno <- getAnno(gplnum, source, biotype)
+##' head(humanAnno)
+##'
+##' ## Load lncRNA microarray probe annotations
+##' gplnum <- "GPL13825"
+##' source <- "pipe"
+##' biotype <- "protein_coding"
+##' humanAnno <- getAnno(gplnum, source, biotype, lncRNA=TRUE)
 ##' head(humanAnno)
 ##' @export
 getAnno <- function(gplnum, source="pipe", biotype="protein_coding", lncRNA=F){
-  if (missing(gplnum)){
+  if(missing(gplnum)){
     stop("No valid gplnum passed in !")
   }
   flag <- checkGPL(gplnum)
@@ -67,16 +77,17 @@ getAnno <- function(gplnum, source="pipe", biotype="protein_coding", lncRNA=F){
 ##' Mapping probeIds to gene symbols
 ##'
 ##' \code{probeIdmap} returns a list of gene ids for the input probe ids
-##' @param probeids,datasets
+##' @param probeids input probe ids
+##' @param datasets a dataframe which contains probe annotaions
+##' @param probeIdcol the column name of probe ids
 ##'
-##' @return if the input dataset is in our platform list(see our manual) ,then the output will be a dataframe,
-##' which includes a list of gene ids mapping to probe ids
+##' @return a dataframe of gene ids mapping to probe ids
 ##'
 ##' @example
 ##' probeids <- c("A_23_P101521","A_33_P3695548","A_33_P3266889","A_33_P3266886")
 ##' gplnum <- "GPL10332"
 ##' source <- "pipe"
-##' biotypr <- "protein_coding"
+##' biotype <- "protein_coding"
 ##' lncRNA <- FALSE
 ##' datasets <- getAnno(gplnum,source, biotype,lncRNA)
 ##' mapRes <- probeIdmap(probeids, datasets)
@@ -117,9 +128,8 @@ probeIdmap <- function(probeids, datasets, probeIdcol){
 
 ##' Get GPL info
 ##'
-##' \code{getGPLinfo} returns a list of gene ids for the input probe ids.input
-##' @param gplnum
-##' @return
+##' @param gplnum GPL(GEO platform) number, eg: GPL570
+##' @return detail information of the GEO platform
 ##' @examples
 getGPLinfo <- function(gplnum){
   allgpl <- getGPLlist()
@@ -128,7 +138,7 @@ getGPLinfo <- function(gplnum){
 
 
 ##' Check the input gpl if in our platform list
-##' @param gplnum
+##' @param gplnum GPL(GEO platform) number, eg: GPL570
 ##' @return returns a boolean value
 ##' @export
 checkGPL <- function(gplnum){
@@ -139,8 +149,8 @@ checkGPL <- function(gplnum){
 
 ##' Get GPL list
 ##'
-##' \code{getGPLinfo} returns a list of gene ids for the input probe ids.input
-##' @param gplnum
+##' \code{getGPLlist} returns a GPL number checklist stored in package
+##' @param gplnum GPL(GEO platform) number, eg: GPL570
 ##' @return
 ##' @examples
 getGPLlist <- function(){

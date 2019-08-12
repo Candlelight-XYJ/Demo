@@ -24,8 +24,8 @@ knitr::opts_chunk$set(
 
 
 ```{r echo=FALSE, results='hide', message=FALSE}
-#library(GEOquery)
-#library(IDmap)
+library(GEOquery)
+library(IDmap)
 ```
 
 
@@ -50,10 +50,9 @@ We perform function `getAnno` to help users access probe annotations.
 + `lncRNA` : The default is FALSE. (if select `True` , users can access the lncRNA arrays annotaion data produced by our customed pipeline)
 
 ```{r}
-probeids <- c("A_23_P101521","A_33_P3695548","A_33_P3266889")
 gplnum <- "GPL10332"
-#humanAnno <- getAnno(gplnum,source, biotype,lncRNA)
-#head(humanAnno)
+humanAnno <- getAnno(gplnum,source="pipe")
+head(humanAnno)
 ```
 
 ## 3. Converting probeids to gene symbols
@@ -63,9 +62,9 @@ Notes: This function will lose the probe ids that are missing from the gene anno
 ```{r}
 probeids <- c("A_23_P101521","A_33_P3695548","A_33_P3266889")
 gplnum <- "GPL10332"
-# datasets <- getAnno(gplnum,source, biotype,lncRNA)
-# mapRes <- probeIdmap(probeids, datasets)
-# head(mapRes)
+datasets <- getAnno(gplnum,source="pipe")
+mapRes <- probeIdmap(probeids, datasets, probeIdcol = "probe_id")
+head(mapRes)
 
 ```
 
@@ -85,14 +84,14 @@ For more details, please visit the website.
 
 #### 5.1 filterExpressionMatrix
 ```{r}
-#eMatrix <- system.file("extdata", "matrixData.Rdata", package="IDmap")
-#allMapIds <- system.file("extdata", "probe2gene.Rdata", package="IDmap")
-#load(eMatrix)
-#load(allMapIds)
+eMatrix <- system.file("extdata", "matrixData.Rdata", package="IDmap")
+allMapIds <- system.file("extdata", "probe2gene.Rdata", package="IDmap")
+load(eMatrix)
+load(allMapIds)
 ## head(matrixData)
 ## head(probe2gene)
-#res <- filterEM(matrixData,probe2gene,omitNA=T)
-#head(res)
+res <- filterEM(matrixData,probe2gene,omitNA=T)
+head(res)
 ```
 
 ## 6. Data Mining with microarray data deposited in GEO
