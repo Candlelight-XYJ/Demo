@@ -8,7 +8,6 @@
 
 refreshRdata <- function(refresh = F) {
   if (refresh) {
-    #setwd("E:/学习资料存放处/IDmap/IDmap_edit/精简版注释/")
     allfiles = list.files(getwd())
     for(i in 1:length(allfiles)){
       print(i)

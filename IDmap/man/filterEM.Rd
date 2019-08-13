@@ -14,14 +14,14 @@ filterEM(eMatrix, probe2gene, omitNA = T)
 \item{omitNA}{omit NA symbol rows in matrix}
 }
 \value{
-filter ids expression ma
+filter duplicated gene symbols expression
 }
 \description{
 \code{filterEM} returns
 }
 \examples{
-eMatrix <- system.file("extdata", "matrixData.Rdata", package="IDmap")
-allMapIds <- system.file("extdata", "probe2gene.Rdata", package="IDmap")
+eMatrix <- system.file("extdata", "matrixData.Rdata", package="AnnoProbe")
+allMapIds <- system.file("extdata", "probe2gene.Rdata", package="AnnoProbe")
 load(eMatrix)
 load(allMapIds)
 ## head(matrixData)

@@ -13,8 +13,8 @@
 ##' @return filter duplicated gene symbols expression
 ##'
 ##' @examples
-##' eMatrix <- system.file("extdata", "matrixData.Rdata", package="IDmap")
-##' allMapIds <- system.file("extdata", "probe2gene.Rdata", package="IDmap")
+##' eMatrix <- system.file("extdata", "matrixData.Rdata", package="AnnoProbe")
+##' allMapIds <- system.file("extdata", "probe2gene.Rdata", package="AnnoProbe")
 ##' load(eMatrix)
 ##' load(allMapIds)
 ##' ## head(matrixData)

@@ -6,6 +6,9 @@
 \usage{
 checkGPL(gplnum)
 }
+\arguments{
+\item{gplnum}{GPL(GEO platform) number, eg: GPL570}
+}
 \value{
 returns a boolean value
 }

@@ -7,12 +7,25 @@
 probeIdmap(probeids, datasets, probeIdcol)
 }
 \arguments{
-\item{probeids, datasets}{}
+\item{probeids}{input probe ids}
+
+\item{datasets}{a dataframe which contains probe annotaions}
+
+\item{probeIdcol}{the column name of probe ids}
 }
 \value{
-if the input dataset is in our platform list(see our manual) ,then the output will be a dataframe,
-which includes a list of gene ids mapping to probe ids
+a dataframe of gene ids mapping to probe ids
 }
 \description{
 \code{probeIdmap} returns a list of gene ids for the input probe ids
+}
+\examples{
+probeids <- c("A_23_P101521","A_33_P3695548","A_33_P3266889","A_33_P3266886")
+gplnum <- "GPL10332"
+source <- "pipe"
+biotype <- "protein_coding"
+lncRNA <- FALSE
+datasets <- getAnno(gplnum,source, biotype,lncRNA)
+mapRes <- probeIdmap(probeids, datasets)
+head(mapRes)
 }

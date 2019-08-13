@@ -3,7 +3,7 @@
 export(checkGPL)
 export(filterEM)
 export(getAnno)
-export(get_geo)
+export(getGPLsoft)
 export(probeIdmap)
 importFrom(GEOquery,getGEO)
 importFrom(utils,packageDescription)

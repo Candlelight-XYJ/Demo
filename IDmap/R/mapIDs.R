@@ -4,7 +4,7 @@
 ##                                    ##
 ########################################
 
-##' Get Annotation
+##' Get Probe Annotation
 ##'
 ##' \code{getAnno} returns annotations for target gpl
 ##' @param gplnum GPL(GEO platform) number, eg: GPL570
@@ -51,7 +51,7 @@ getAnno <- function(gplnum, source="pipe", biotype="protein_coding", lncRNA=F){
   annoData <- paste0(species, "_all_anno")
   }
   if(!(annoData %in% ls())){
-  eval(parse(text = paste0("tryCatch(utils::data( ",annoData,", package = 'IDmap'))")))
+  eval(parse(text = paste0("tryCatch(utils::data( ",annoData,", package = 'AnnoProbe'))")))
     }
   res = eval(parse(text = paste0(annoData,"$",gplnum)))
   ## filter annotations by source type
@@ -83,13 +83,13 @@ getAnno <- function(gplnum, source="pipe", biotype="protein_coding", lncRNA=F){
 ##'
 ##' @return a dataframe of gene ids mapping to probe ids
 ##'
-##' @example
+##' @examples
 ##' probeids <- c("A_23_P101521","A_33_P3695548","A_33_P3266889","A_33_P3266886")
 ##' gplnum <- "GPL10332"
 ##' source <- "pipe"
 ##' biotype <- "protein_coding"
 ##' lncRNA <- FALSE
-##' datasets <- getAnno(gplnum,source, biotype,lncRNA)
+##' datasets <- getAnno(gplnum, source, biotype, lncRNA)
 ##' mapRes <- probeIdmap(probeids, datasets)
 ##' head(mapRes)
 ##' @export
@@ -98,7 +98,7 @@ probeIdmap <- function(probeids, datasets, probeIdcol){
     stop("No valid probeids passed in !")
   }
   ## ids mapping results
-  res <- datasets[match(probeids,eval(parse(text = paste0("datasets$",probeIdcol)))),]
+  res <- datasets[match(probeids, eval(parse(text = paste0("datasets$",probeIdcol)))),]
   missIds <- probeids[!(probeids %in% eval(parse(text = paste0("res$",probeIdcol))))]
   if(length(missIds)!=0){
    warning(
@@ -130,7 +130,6 @@ probeIdmap <- function(probeids, datasets, probeIdcol){
 ##'
 ##' @param gplnum GPL(GEO platform) number, eg: GPL570
 ##' @return detail information of the GEO platform
-##' @examples
 getGPLinfo <- function(gplnum){
   allgpl <- getGPLlist()
   return(allgpl[match(gplnum,allgpl$gpl), ])
@@ -151,10 +150,9 @@ checkGPL <- function(gplnum){
 ##'
 ##' \code{getGPLlist} returns a GPL number checklist stored in package
 ##' @param gplnum GPL(GEO platform) number, eg: GPL570
-##' @return
-##' @examples
+##' @return a dataframe which contains 146 GEO platform information .
 getGPLlist <- function(){
-  tryCatch(utils::data("ALL_GPL_LIST", package = "IDmap"))
+  tryCatch(utils::data("ALL_GPL_LIST", package = "AnnoProbe"))
   gplList <- ALL_GPL_LIST
   return(gplList)
 }

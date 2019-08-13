@@ -6,6 +6,12 @@
 \usage{
 getGPLinfo(gplnum)
 }
+\arguments{
+\item{gplnum}{GPL(GEO platform) number, eg: GPL570}
+}
+\value{
+detail information of the GEO platform
+}
 \description{
-\code{getGPLinfo} returns a list of gene ids for the input probe ids.input
+Get GPL info
 }

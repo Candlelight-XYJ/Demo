@@ -6,6 +6,12 @@
 \usage{
 getGPLlist()
 }
+\arguments{
+\item{gplnum}{GPL(GEO platform) number, eg: GPL570}
+}
+\value{
+a dataframe which contains 146 GEO platform information .
+}
 \description{
-\code{getGPLinfo} returns a list of gene ids for the input probe ids.input
+\code{getGPLlist} returns a GPL number checklist stored in package
 }

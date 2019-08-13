@@ -8,17 +8,31 @@ getAnno(gplnum, source = "pipe", biotype = "protein_coding",
   lncRNA = F)
 }
 \arguments{
-\item{gplnum, source, biotype, lncRNA}{}
+\item{gplnum}{GPL(GEO platform) number, eg: GPL570}
+
+\item{source}{source of probe anntation stored, one of "pipe", "bioc", "soft", "all"}
+
+\item{biotype}{GENCODE biotypes,eg:"protein_coding","non_coding","pseudogene" ...}
+
+\item{lncRNA}{default is FALSE,lncRNA microarrays only have pipe annotation, if choose lncRNA microarray, the parameter must set as TRUE}
 }
 \value{
-
+probe annotaions
 }
 \description{
 \code{getAnno} returns annotations for target gpl
 }
 \examples{
-probeids <- c("A_23_P101521","A_33_P3695548","A_33_P3266889")
 gplnum <- "GPL10332"
-humanAnno <- getAnno(gplnum)
+source <- "pipe"
+biotype <- "protein_coding"
+humanAnno <- getAnno(gplnum, source, biotype)
+head(humanAnno)
+
+## Load lncRNA microarray probe annotations
+gplnum <- "GPL13825"
+source <- "pipe"
+biotype <- "protein_coding"
+humanAnno <- getAnno(gplnum, source, biotype, lncRNA=TRUE)
 head(humanAnno)
 }
