@@ -12,7 +12,7 @@ output:
   pdf_document:
     toc: true
 vignette: |
-  %\usepackage[utf8]{inputenc} %\VignetteEncoding{UTF-8} %\VignetteIndexEntry{IDmap : An R/Bioconductor package XXX} %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc} %\VignetteEncoding{UTF-8} %\VignetteIndexEntry{AnnoProbe : An R/Bioconductor package for probe annotating} %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r setup, include = FALSE}
@@ -131,10 +131,21 @@ head(phenoDat)
 
 #### 6.2 Differential gene expression analysis
 ```{r}
-
-
-
-
+#library(limma)
+#design = model.matrix(~0+factor( groupList ))
+#colnames(design)=levels(factor(groupList))
+#design
+#contrast.matrix<-makeContrasts("control-IL17A",
+#                                levels = design)
+##step1
+#fit <- lmFit(dat,design)
+##step2
+#fit2 <- contrasts.fit(fit, contrast.matrix) 
+#fit2 <- eBayes(fit2)  ## default no trend !!!
+##step3
+#tempOutput = topTable(fit2, coef=1, n=Inf)
+#nrDEG = na.omit(tempOutput) 
+ 
 ```
 
 ## 7. Data Updates
