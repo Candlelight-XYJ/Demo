@@ -6,7 +6,7 @@ library(shinythemes)
 library(knitr)
 ## head 
 headerbar <- dashboardHeader(
-  title = "IDmap Workflow",
+  title = "AnnoProbe Workflow",
   titleWidth = 270,
   dropdownMenu(
     type = "notifications",
@@ -28,19 +28,33 @@ sidebar <- dashboardSidebar(
 home <- tabPanel(
   "Home",icon = icon("home"),
   sidebarPanel(
-  selectizeInput("selectSpe", "Select Species", choices=c("human","mouse","rat"), selected = NULL, multiple = FALSE,
-                   options = NULL),
-  selectizeInput("selectType", "Select biotype", 
-                 choices=c("protein_coding" = "protein_coding" 
-                           ,"non_coding"="non_coding"
-                           ,"lincRNA"="lincRNA",
-                           "all" = "*"), selected = NULL, multiple = FALSE,options = NULL),
+  #selectizeInput("selectSpe", "Select Species", choices=c("human","mouse","rat"), selected = NULL, multiple = FALSE,
+  #                 options = NULL),
+  
+  #selectizeInput("selectArrayType", "Select microarray type", 
+  #               choices=c("lncRNA microarray" = "lncRNA" 
+  #                        ,"Expression microarray"="exp"
+  #                         ), selected = NULL, multiple = FALSE,options = NULL),
+  
   selectizeInput("selectGPL", 
                  label = "Please input geo platform number(GPL)", 
                  choices = NULL ,
                  multiple = FALSE,
                  options = list(placeholder = "eg: GPL570",
                                 maxOptions = 10)),
+  selectizeInput("selectBiotypeType", "Select biotype's type (Suggest pipebiotype)", 
+                 choices=c("pipeline biotypes" = "pipeBiotype" 
+                           ,"soft biotypes"="softBiotype"
+                           ,"bioconductor biotypes"="biocBiotype"), 
+                 selected = NULL, multiple = FALSE,options = NULL),
+  
+    
+  selectizeInput("selectType", "Select biotype", 
+                 choices=c("protein_coding" = "protein_coding" 
+                           ,"non_coding"="non_coding"
+                           ,"lincRNA"="lincRNA",
+                           "all" = "*"), selected = NULL, multiple = FALSE,options = NULL),
+  
   actionButton("searchGPL","Search",icon("search"),
                style="color: #fff; background-color: #104E8B; border-color: #1874CD"),
   br(),
@@ -54,7 +68,7 @@ home <- tabPanel(
         "Now,we have stored human, mouse, rat probe annotations"
       ),
       valueBox(
-        "146",icon = icon("list"),color="light-blue",
+        "147",icon = icon("list"),color="light-blue",
         strong("GPL annotations")
       ),
       valueBox(

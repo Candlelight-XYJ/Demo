@@ -78,6 +78,11 @@ loadUsrGTF <- reactive({
    return(gtfFile)
 })
 
+## Load GPL info files
+#loadGPLinfo <- reactive({
+#  openxlsx::read.xlsx("data/gpl_list.xlsx")
+#})
+#react_Values$GPLinfo = loadGPLinfo()
 
 ######################################
 #### Load files from stored files #### 
@@ -125,6 +130,11 @@ source('scripts/output_and_download.R', local = TRUE)
 ##############################
 source('scripts/doDEG.R', local = TRUE)
 
+##############################
+##     select species &   ##
+##############################
+source('scripts/getAttribute.R', local = TRUE)
+
 
 
 ######################
@@ -136,8 +146,10 @@ source('scripts/doDEG.R', local = TRUE)
 ####################
 ## select gpl acc ##
 ####################
-gplname = read.xlsx("data/gpl_list.xlsx")
-updateSelectizeInput(session, 'selectGPL', choices = as.vector(gplname$gpl),
+GPLinfo = loadGPLinfo()
+#gplnum <- loadGPLinfo()
+#head(gplnum)
+updateSelectizeInput(session, 'selectGPL', choices = as.vector(GPLinfo$gpl),
                      options = list(render = I(
                        "{
                        option: function(item, escape) {
@@ -146,10 +158,6 @@ updateSelectizeInput(session, 'selectGPL', choices = as.vector(gplname$gpl),
                      server = TRUE)
   
 })
-
-
-
-
 
 
 

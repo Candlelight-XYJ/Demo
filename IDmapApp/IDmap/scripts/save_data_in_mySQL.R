@@ -17,13 +17,16 @@ library(RMySQL)
   db <- dbConnect(RMySQL::MySQL(), host=host,
                   dbname=dbname,port=port, 
                   user=user, password=password)
-
+  
+  # dbRemoveTable(db, "human_all_anno")
+  
   zz <- dbWriteTable(conn = db,
                      name = "rat_lncRNA_anno",
                      value = rat_lncRNA_anno,
                      overwrite = F,
                      row.names = FALSE)
-  #dbGetQuery(db, 'SELECT * FROM human_all_anno LIMIT 25')
+  # dbGetQuery(db, 'SELECT * FROM human_all_anno LIMIT 5')
+  # dbGetQuery(db, 'select * from human_all_anno where gpl = 'GPL10332' and pipeBiotype = 'protein_coding'')
   dbListTables(db)
   dbDisconnect(db)
 

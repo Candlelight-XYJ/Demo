@@ -17,9 +17,15 @@ output$viewBed <- renderPlot({
 output$searchTable <- DT::renderDataTable({
   searchRes <- react_Values$searchRes
   if(!is.null(searchRes)){
-    tmp1 <- with(searchRes, data.frame(probe_id = probe_id, pipeAnno = pipeAnno,
-                                       biocAnno = biocAnno, ensembl_id = ensembl_id, biotype = biotype))
-    tmp1$GPL <- createLink(paste0("https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=",searchRes$gpl),searchRes$gpl)
+    tmp1 <- with(searchRes, data.frame(probe_id = probe_id, pipeAnno = pipeAnno, softAnno =softAnno,
+                                       biocAnno = biocAnno))
+    biotypeType = switch(input$selectBiotypeType,
+                         "pipeBiotype" = "pipeBiotype",
+                         "softBiotype" = "softBiotype",
+                         "biocBiotype" = "biocBiotype")
+    
+    eval(parse(text=paste0("tmp1$",biotypeType, "=", "searchRes$", biotypeType)))
+    #tmp1$GPL <- createLink(paste0("https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=",searchRes$gpl),searchRes$gpl)
     
     #genome=ifelse(glob_values$species=='human','hg38','mm10')
     #UCSC_link=createLink(paste0( "http://dc2.cistrome.org/api/hgtext/", tmp1$sampleID,

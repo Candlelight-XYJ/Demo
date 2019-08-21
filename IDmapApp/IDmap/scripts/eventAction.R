@@ -2,10 +2,18 @@
 ## do search MySQL ##
 #####################  
 observeEvent(input$searchGPL,{
+  GPLinfo = loadGPLinfo()
   #querySQL="select * from"
-  querySQL <- paste0("select * from ",input$selectSpe,"_all_anno"," where gpl = ",shQuote(input$selectGPL),
-                     " and ","biotype = ",shQuote(input$selectType))
-  #print(querySQL)
+  if(getArrayType(input$selectGPL,GPLinfo)=="exp"){
+    querySQL <- paste0("select * from ",getSpecies(input$selectGPL,GPLinfo),"_all_anno"," where gpl = ",shQuote(input$selectGPL),
+                       " and ", input$selectBiotypeType," = ", shQuote(input$selectType))
+  }
+  if(getArrayType(input$selectGPL,GPLinfo)=="lncRNA"){
+    querySQL <- paste0("select * from ",getSpecies(input$selectGPL,GPLinfo),"_lncRNA_anno"," where gpl = ",shQuote(input$selectGPL),
+                       " and ", input$selectBiotypeType, " = ", shQuote(input$selectType))
+  }
+  
+  print(querySQL)
   #tmp <- getSQLitedata(querySQL)
   tmp <- getMySQLdata(querySQL)
   react_Values$searchRes <- tmp
