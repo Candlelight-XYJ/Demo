@@ -25,7 +25,7 @@ gplnum <- "GPL10332"
 source <- "pipe"
 biotype <- "protein_coding"
 lncRNA <- FALSE
-datasets <- getAnno(gplnum,source, biotype,lncRNA)
+datasets <- getAnno(gplnum, source, biotype, lncRNA)
 mapRes <- probeIdmap(probeids, datasets)
 head(mapRes)
 }

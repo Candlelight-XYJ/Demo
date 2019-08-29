@@ -2,7 +2,7 @@
 % Please edit documentation in R/mapIDs.R
 \name{getAnno}
 \alias{getAnno}
-\title{Get Annotation}
+\title{Get Probe Annotation}
 \usage{
 getAnno(gplnum, source = "pipe", biotype = "protein_coding",
   lncRNA = F)
