@@ -11,7 +11,7 @@ probeIdmap(probeids, datasets, probeIdcol)
 
 \item{datasets}{a dataframe which contains probe annotaions}
 
-\item{probeIdcol}{the column name of probe ids}
+\item{probeIdcol}{the column name of probe ids in annotation datasets}
 }
 \value{
 a dataframe of gene ids mapping to probe ids

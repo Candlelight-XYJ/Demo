@@ -65,7 +65,7 @@ Function `probeIdmap` matching probeids with gene symbols
 
 + `gplnum` The GEO Platform Accession Number
 + `datasets` The probe annotations, which contains the corresponding relationship of gene symbols and probe ids
-+ `probeIdcol` The column name of probe ids
++ `probeIdcol` The column name of probe ids in annotation datasets
 
 Notes: This function will lose some probe ids that are not in the gene annotations
 ```{r}
@@ -115,7 +115,7 @@ head(res)
 
 There are many valuable microarray data sets deposited in GEO database. We can download those data and perform bioinformatics analysis to reveal new biological insights . Following is a case study for users using `AnnoProbe` package to remine GEO data sets.
 
-#### 6.1 Download microarray data from GEO
++ Download microarray data from GEO
 ```{r}
 library(AnnoProbe)
 library(GEOquery)
@@ -123,29 +123,46 @@ library(GEOquery)
 gse27533 <- getGEO('GSE27533', destdir=".", AnnotGPL = F, getGPL = F)  
 ## expression matrix
 eset <- exprs(gse27533[[1]])
-head(eset)
+head(eset[,1:4])
 ## pheno data
 phenoDat <- pData(gse27533[[1]])
-head(phenoDat)
+head(phenoDat[,1:4])
 ```
 
-#### 6.2 Differential gene expression analysis
++ Differential gene expression analysis
 ```{r}
-#library(limma)
-#design = model.matrix(~0+factor( groupList ))
-#colnames(design)=levels(factor(groupList))
-#design
-#contrast.matrix<-makeContrasts("control-IL17A",
-#                                levels = design)
-##step1
-#fit <- lmFit(dat,design)
-##step2
-#fit2 <- contrasts.fit(fit, contrast.matrix) 
-#fit2 <- eBayes(fit2)  ## default no trend !!!
-##step3
-#tempOutput = topTable(fit2, coef=1, n=Inf)
-#nrDEG = na.omit(tempOutput) 
- 
+library(limma)
+groupList=factor(c(rep('control',3),rep('IL-17A',3))) 
+design=model.matrix(~factor(groupList))
+design
+fit=lmFit(eset,design)
+fit=eBayes(fit) 
+deg=topTable(fit,coef=2,n=Inf)
+head(deg) 
+```
+
+
++ Annotating probe IDs
+```{r}
+pfilter_DEG <- deg[which((deg$adj.P.Val < 0.05 & deg$logFC > 1) | (deg$adj.P.Val < 0.05 & deg$logFC < -1)),]
+# annotating probe IDs using AnnoProbe
+probe2symbol=AnnoProbe::getAnno("GPL10558",source="pipe",biotype = "all")
+probeIdmapRes=AnnoProbe::probeIdmap(rownames(pfilter_DEG), probe2symbol, probeIdcol = "probe_id")
+diff_Genes=unique(probeIdmapRes$pipeAnno)
+```
+
++ Gene ontology enrichment
+```{r}
+library(clusterProfiler)
+library(org.Hs.eg.db)
+customedGO <- enrichGO(gene         = diff_Genes,
+                         OrgDb         = org.Hs.eg.db,
+                         keyType       = 'SYMBOL',
+                         ont           = "ALL",
+                         pAdjustMethod = "BH",
+                         pvalueCutoff  = 0.01,
+                         qvalueCutoff  = 0.05)
+barplot(customedGO)
 ```
 
 ## 7. Data Updates

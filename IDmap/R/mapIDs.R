@@ -1,8 +1,8 @@
-########################################
-##                                    ##
-## code last update: August 12, 2019  ##
-##                                    ##
-########################################
+#####################################
+##                                 ##
+## code last update: Sep 05, 2019  ##
+##                                 ##
+#####################################
 
 ##' Get Probe Annotation
 ##'
@@ -65,7 +65,7 @@ getAnno <- function(gplnum, source="pipe", biotype="protein_coding", lncRNA=F){
   #head(sourceFilter)
   ## filter annotations by biotype
   if(biotype != "all"){
-  biotypeFilter <- eval(parse(text=paste0("sourceFilter[sourceFilter$biotype==","\'",biotype,"\'",",]")))
+    biotypeFilter <- eval(parse(text=paste0("sourceFilter[sourceFilter$",source,"Biotype==","\'",biotype,"\'",",]")))
   biotypeFilter <- biotypeFilter[,-ncol(biotypeFilter)]
   biotypeFilter <- biotypeFilter[!duplicated(biotypeFilter),]
   return(biotypeFilter)
@@ -79,7 +79,7 @@ getAnno <- function(gplnum, source="pipe", biotype="protein_coding", lncRNA=F){
 ##' \code{probeIdmap} returns a list of gene ids for the input probe ids
 ##' @param probeids input probe ids
 ##' @param datasets a dataframe which contains probe annotaions
-##' @param probeIdcol the column name of probe ids
+##' @param probeIdcol the column name of probe ids in annotation datasets
 ##'
 ##' @return a dataframe of gene ids mapping to probe ids
 ##'
@@ -100,31 +100,17 @@ probeIdmap <- function(probeids, datasets, probeIdcol){
   ## ids mapping results
   res <- datasets[match(probeids, eval(parse(text = paste0("datasets$",probeIdcol)))),]
   missIds <- probeids[!(probeids %in% eval(parse(text = paste0("res$",probeIdcol))))]
+  missIdsPercentage = round((length(missIds)/length(probeids))*100,2)
   if(length(missIds)!=0){
    warning(
-     paste0("probeid ",missIds ," are missing in datasets \n")
+     paste0(missIdsPercentage ,"% of input probe IDs are fail to map... ")
+     # 5.29% of input gene IDs are fail to map...
      # write.csv(missIds, file = paste0(getwd(), "/missing-probe-ids-", Sys.time()))
      )
   }
   rownames(res) <- NULL
   return(res)
 }
-
-#probeIdmap <- function(probeids, gplnum, source, biotype, lncRNA=F){
-#  if (missing(probeids)){
-#    stop("No valid probeids passed in !")
-#  }
-#  flag <- checkGPL(gplnum)
-#  if(!flag){
-#    stop("please check your platform is in our gpl list \t
-#         or you can use function `getGPLsoft()` to download soft annotations from GEO")
-#  }
-#  ## load data
-#  datasets <- getAnno(gplnum, source, biotype, lncRNA)
-#  ## ids mapping result
-#  res <- datasets[match(probeids,datasets),]
-#  return(res)
-#}
 
 ##' Get GPL info
 ##'
