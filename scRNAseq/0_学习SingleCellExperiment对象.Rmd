@@ -1,0 +1,68 @@
+---
+title: "学习SingleCellExperiment对象"
+author: "yujia"
+date: "2020年5月7日"
+output: html_document
+---
+
+> https://osca.bioconductor.org/data-infrastructure.html
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1-Introduction
+对于Single-cell RNA-seq的数据, bioconductor里面专门有一个名字叫做 *SingleCellExperiment* 的S4对象用于存储SC-RNAseq数据。这个对象的存储结构如下所示：
+
+![](./mdFigures/SingleCellExperiment.png)
+
+安装方法
+
+```{r SingleCellExperiment}
+#BiocManager::install("SingleCellExperiment")
+library(SingleCellExperiment)
+```
+
+## 2-存储基本的SC-RNAseq实验数据
+
+首先模拟构建一个SC-RNAseq的Count表达矩阵, 每行是基因，每列为Cell样本
+
+```{r, echo=FALSE}
+counts_matrix <- data.frame(cell_1 = rpois(10, 10), 
+                    cell_2 = rpois(10, 10), 
+                    cell_3 = rpois(10, 30))
+rownames(counts_matrix) <- paste0("gene_", 1:10)
+counts_matrix <- as.matrix(counts_matrix) # must be a matrix object!
+```
+
+使用 `SingleCellExperiment` 函数, 构建 `SingleCellExperiment` 对象
+
+```{r}
+sce <- SingleCellExperiment(assays = list(counts = counts_matrix))
+sce
+```
+
+使用操作函数, 提取添加 `SingleCellExperiment` 对象中的数据
+
+```{r}
+## assay第二个参数指定 "counts" 就可以提取 sce 对象中的 count矩阵
+assay(sce, "counts") 
+```
+
+`SingleCellExperiment` 对象 可以存储多个 **`assays`**. 这样做的好处是, 我们的 count 矩阵可能有 raw_count, 也可能有归一化后的 count; 用多个 `assays` 就可以分别存储这些表达量数据
+
+```{r}
+## 使用scater的函数标准化我们的sce的 raw counts
+## 标准化后的sce直接覆盖赋值给原来的sce
+#sce <- scater::logNormCounts(sce)
+## 新的sce会包含两个 assays, 一个是counts 另一个是logcounts
+sce
+
+## 我们可以直接使用 logcounts(sce) 或者 assay(sce,"logcounts") 提取标准化后的表达矩阵
+
+#head(logcounts(sce))
+#assay(sce,"logcounts")
+
+```
+
+
