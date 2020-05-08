@@ -195,8 +195,6 @@ summary {
 
 </div>
 <p>安装方法</p>
-<pre class="r"><code>#BiocManager::install(&quot;SingleCellExperiment&quot;)
-library(SingleCellExperiment)</code></pre>
 <pre><code>## Loading required package: SummarizedExperiment</code></pre>
 <pre><code>## Loading required package: GenomicRanges</code></pre>
 <pre><code>## Loading required package: stats4</code></pre>
@@ -256,9 +254,8 @@ library(SingleCellExperiment)</code></pre>
 <pre><code>## The following objects are masked from 'package:base':
 ## 
 ##     aperm, apply</code></pre>
-</div>
-<div id="存储基本的sc-rnaseq实验数据" class="section level2">
-<h2>2-存储基本的SC-RNAseq实验数据</h2>
+<div id="存储基本的sc-rnaseq实验数据" class="section level4">
+<h4>存储基本的SC-RNAseq实验数据</h4>
 <p>首先模拟构建一个SC-RNAseq的Count表达矩阵, 每行是基因，每列为Cell样本</p>
 <p>使用 <code>SingleCellExperiment</code> 函数, 构建 <code>SingleCellExperiment</code> 对象</p>
 <pre class="r"><code>sce &lt;- SingleCellExperiment(assays = list(counts = counts_matrix))
@@ -273,25 +270,45 @@ sce</code></pre>
 ## colData names(0):
 ## reducedDimNames(0):
 ## spikeNames(0):</code></pre>
-<p>使用操作函数, 提取添加 <code>SingleCellExperiment</code> 对象中的数据</p>
+</div>
+<div id="使用操作函数-提取添加-singlecellexperiment-对象中的数据" class="section level4">
+<h4>使用操作函数, 提取添加 <code>SingleCellExperiment</code> 对象中的数据</h4>
 <pre class="r"><code>## assay第二个参数指定 &quot;counts&quot; 就可以提取 sce 对象中的 count矩阵
 assay(sce, &quot;counts&quot;) </code></pre>
 <pre><code>##         cell_1 cell_2 cell_3
-## gene_1      11      9     35
-## gene_2      13     10     30
-## gene_3      11      3     32
-## gene_4       7      5     22
-## gene_5      12     13     30
-## gene_6       9      9     30
-## gene_7       9      5     22
-## gene_8       6     14     31
-## gene_9      11      9     36
-## gene_10     10      8     27</code></pre>
+## gene_1      10      9     35
+## gene_2      11     10     31
+## gene_3      10     11     23
+## gene_4      13      9     32
+## gene_5       7     11     25
+## gene_6       5      7     22
+## gene_7       7     14     31
+## gene_8      12      9     35
+## gene_9       7     10     31
+## gene_10      4      7     28</code></pre>
 <p><code>SingleCellExperiment</code> 对象 可以存储多个 <strong><code>assays</code></strong>. 这样做的好处是, 我们的 count 矩阵可能有 raw_count, 也可能有归一化后的 count; 用多个 <code>assays</code> 就可以分别存储这些表达量数据</p>
 <pre class="r"><code>## 使用scater的函数标准化我们的sce的 raw counts
 ## 标准化后的sce直接覆盖赋值给原来的sce
 #sce &lt;- scater::logNormCounts(sce)
 ## 新的sce会包含两个 assays, 一个是counts 另一个是logcounts
+#sce
+## 我们可以直接使用 logcounts(sce) 或者 assay(sce,&quot;logcounts&quot;) 提取标准化后的表达矩阵
+#head(logcounts(sce))
+#assay(sce,&quot;logcounts&quot;)
+
+## 手动添加 assay
+counts_100 &lt;- counts(sce)+100
+assay(sce,&quot;counts_100&quot;) &lt;- counts_100
+assays(sce)</code></pre>
+<pre><code>## List of length 2
+## names(2): counts counts_100</code></pre>
+</div>
+<div id="添加metadata" class="section level4">
+<h4>添加metadata</h4>
+<p>metadata包括我们的细胞系,处理条件, 批次等信息; 这些都可以添加到sce对象中; SingleCellExperiment对象存储此类信息的slot有 <code>colData</code> (细胞系信息), <code>rowData/rowRanges</code> (feature的metadata)和 <code>metadata</code></p>
+<pre class="r"><code>cell_metadata &lt;- data.frame(batch = c(1, 1, 2))
+rownames(cell_metadata) &lt;- paste0(&quot;cell_&quot;, 1:3)
+sce &lt;- SingleCellExperiment(assays = list(counts = counts_matrix),colData = cell_metadata)
 sce</code></pre>
 <pre><code>## class: SingleCellExperiment 
 ## dim: 10 3 
@@ -300,13 +317,13 @@ sce</code></pre>
 ## rownames(10): gene_1 gene_2 ... gene_9 gene_10
 ## rowData names(0):
 ## colnames(3): cell_1 cell_2 cell_3
-## colData names(0):
+## colData names(1): batch
 ## reducedDimNames(0):
 ## spikeNames(0):</code></pre>
-<pre class="r"><code>## 我们可以直接使用 logcounts(sce) 或者 assay(sce,&quot;logcounts&quot;) 提取标准化后的表达矩阵
-
-#head(logcounts(sce))
-#assay(sce,&quot;logcounts&quot;)</code></pre>
+</div>
+</div>
+<div id="sce类对象在单细胞领域特有slot" class="section level2">
+<h2>2- SCE类对象在单细胞领域特有slot</h2>
 </div>
 
 
