@@ -110,11 +110,12 @@ reducedDim(sce, "UMAP_uwot")
 
 ## Quick start
 
-使用droplet-based数据集(来自scRNAseq包)展示一个快速处理SC数据的示例
+使用数据集(来自scRNAseq包)展示一个快速处理SC数据的示例
 
 ```{r}
 library(scRNAseq)
-#sce <- MacoskoRetinaData()
+data(fluidigm)
+
 
 ## 1-质量控制
 #library(scater)
