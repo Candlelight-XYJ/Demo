@@ -1,0 +1,178 @@
+---
+title: "1_QualityControl"
+author: "yujia"
+date: "2020年6月5日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1.原因
+scRNA-seq数据中的低质量文库可能有多种来源, 例如解离过程中的细胞损伤或文库制备失败(例如无效的逆转录或PCR扩增)
+
+这些低质量的文库通常会使我们的`细胞`数据的总计数低，表达的基因很少，线粒体或spike-in比例高。这些低质量的文库导致下游分析中产生误导性的结果, 主要是以下几个问题：
+
++ 这些低质量文库所产生的数据可能会在聚类的时候形成一块独特的cluster, 从而使我们对结果的解释变得复杂. 比较显著的原因是细胞受到损伤后它的线粒体比例会增加,或者核RNA会富集; 由于不同类型细胞损伤后会诱导产生相似的损伤引起的低质量的文库数据，这些数据会由于相似性而聚集在一起，从而影响结果解释;
+
++ 这些低质量的数据会使我们做PCA或变异估计得时候得到不正确得结果; 因为PCA主要是检测数据中的差异,低质量细胞和高质量细胞之间的差异基因会很明显的驱动PCA的变量选择,所以PCA很可能选出的主成分是那种由于低质量和高质量数据差异导致基因...
+
++ 它们包含的基因似乎由于主动缩放而标准化为小文库大小而被强烈“上调”。这对于污染以低但恒定水平存在于所有文库中的转录本（例如，来自环境溶液）最成问题。在低质量文库中增加的缩放比例会以较大的标准化表达值将这些转录物的计数转换为少量，从而导致与其他细胞相比明显的上调。这可能会产生误导，因为受影响的基因通常在生物学上是敏感的，但实际上在另一个亚群中表达。
+
+为了减少以上问题, 我们在进行下游分析之前需要删除这些低质量的cell, 这样的步骤就叫做基于细胞的质量控制(cell based QC); 以下使用来自 Lun等人的scRNA-seq数据集演示质量控制的步骤
+
+```{r pressure, echo=FALSE}
+library(scRNAseq)
+sce.416b <- LunSpikeInData(which="416b") 
+sce.416b$block <- factor(sce.416b$block)
+```
+
+## 2.单细胞转录组数据质量控制的指标选择
+我们使用几种常见的质量指标来基于表达量鉴定低质量的细胞
+以下的质量指标是基于SMART-seq2的数据的, 但是对于UMI以及其它技术产生的数据(例如 MARS-seq和 droplet-based protocol)依然可以用此指标
+
++ `Library size`
+`Library size` 的意思是每个细胞所有feature(此处指细胞的內源基因)的counts的总和;
+如果一个细胞的 `library size`小,那么这个细胞的质量就低,因为很可能文库制备的时候，由于细胞裂解或cDNA捕获和扩增效率低下而导致RNA在某一时刻丢失,使`library size`变小
+
++ 如果一个cell中, 它表达的基因很少(即,表达为0的基因特别多),那么这个细胞也是低质量的细胞, 说明它内部的转录本并没有被完全捕获
+
++ `spike-in` reads. 每个细胞内部按道理来说都是添加的相同比例的spike-in的RNA, 一旦我们发现某个细胞中 spike-in的reads占比较高,那么这个很可能是低质量的细胞, 它的內源RNA可能在细胞裂解和解离过程中被降解了
+
++ 如果没有 `spike-in`的转录本, 也可以使用比对到线粒体基因组上的reads比例来判断细胞质量; 线粒体比例较高, 那么细胞质量就比较低; 原因是，在存在中度损伤的情况下，细胞膜上的孔允许单个转录分子外流，但太小而不能允许线粒体逃逸，从而导致线粒体转录本的相对富集. 对于单核RNA-seq实验，高比例也很有用，因为它们可以标记细胞质未被成功剥离的细胞
+
+
+我们使用`scater`包中的 `perCellQCMetrics()` 函数对每个细胞执行QC指标的计算. 
+结果中的每列元素的含义是: 
++ `sum` 每个细胞的count数目的和
++ `detected` 检测到的基因数目
++ `subsets_Mito_percent` 比对到线粒体上的转录本比例
++ `altexps_ERCC_percent` 比对到ERCC上的转录本比例
+
+
+```{r}
+# Retrieving the mitochondrial transcripts using genomic locations included in
+# the row-level annotation for the SingleCellExperiment.
+location <- rowRanges(sce.416b)
+is.mito <- any(seqnames(location)=="MT")
+
+# ALTERNATIVELY: using resources in AnnotationHub to retrieve chromosomal
+# locations given the Ensembl IDs; this should yield the same result.
+library(AnnotationHub)
+ens.mm.v97 <- AnnotationHub()[["AH73905"]]
+chr.loc <- mapIds(ens.mm.v97, keys=rownames(sce.416b),
+    keytype="GENEID", column="SEQNAME")
+is.mito.alt <- which(chr.loc=="MT")
+
+library(scater)
+df <- perCellQCMetrics(sce.416b, subsets=list(Mito=is.mito))
+df
+
+```
+此外, 也可以用 `addPerCellQC()` 函数获取细胞数据的QC信息, 与`perCellQCMetrics()` 不同的是, `addPerCellQC()`可以将得到的QC统计数据自动添加到`SingleCellExperiment`对象的`colData`中
+
+```{r}
+sce.416b <- addPerCellQC(sce.416b, subsets=list(Mito=is.mito))
+colnames(colData(sce.416b))
+```
+
+## 3. 鉴定低质量的细胞
+
+我们在过滤低质量细胞的时候, QC指标阈值可以是固定的, 也可以是随数据变化的
+
+#### 3.1 固定阈值筛选
+最简单的过滤低质量的细胞的方法是直接设置一个阈值, 例如设定 library size < 100,000 reads 或 表达基因少于5000个 或 spike-in比例超过 10% 或线粒体比例超过 10% 则为低质量的细胞, 需要被去除
+
+```{r}
+qc.lib <- df$sum < 1e5
+qc.nexprs <- df$detected < 5e3
+qc.spike <- df$altexps_ERCC_percent > 10
+qc.mito <- df$subsets_Mito_percent > 10
+discard <- qc.lib | qc.nexprs | qc.spike | qc.mito
+
+# Summarize the number of cells removed for each reason.
+DataFrame(LibSize=sum(qc.lib), NExprs=sum(qc.nexprs),
+    SpikeProp=sum(qc.spike), MitoProp=sum(qc.mito), Total=sum(discard))
+
+```
+
+这种方法虽然比较简单, 当时需要有大量的经验才能确定每种实验方案适合的阈值; 不同数据类型和不同的生物学实验条件所需的阈值是不一样的
+
+#### 3.2 自适应阈值
+
+使用MAD(median absolute deviation )值来过滤离群的低质量细胞; 
+具体地说，如果一个值在“有问题的”方向上离中位数超过3MADs，则被认为是离群值。这是由于这样的过滤器将保留99%遵循正态分布的非离群值
+
+可以使用 `isOutlier` 函数人工对各个指标都检查一遍, 也可以直接使用 `quickPerCellQC` 函数(它整合了isOutlier函数)快速给出每个metrics的outlier情况
+
+```{r}
+reasons <- quickPerCellQC(df, percent_subsets=c("subsets_Mito_percent",
+    "altexps_ERCC_percent"))
+colSums(as.matrix(reasons))
+```
+
+##### 离群值检测是有前体假设的
+离群检测假设大多数单元格具有可接受的质量。这通常是合理的，并且可以在某些情况下通过肉眼检查细胞是否完整（例如在微孔板上）进行实验支持。如果大多数小区的质量（不可接受）低，则自适应阈值显然会失败，因为它们无法删除大多数小区。当然，在旁观者眼中，可接受的与否是可接受的-例如，众所周知，神经元很难分解，而我们通常会将细胞保留在具有QC指标的神经元scRNA-seq数据集中，这在更多情况下是不可接受的。适宜的系统，如胚胎干细胞。
+
+前面讨论的另一个假设是，质控指标与每个细胞的生物学状态无关。在高度异质性细胞群体中最有可能违反这一假设，在这些物种中，自然具有较少RNA或更多线粒体的细胞类型更有可能被认为是异常值，即使它们是高质量的，也会被去除。通过考虑QC指标中的生物变异性，MAD的使用在某种程度上减轻了该问题。异类种群在高质量细胞之间的指标应具有较高的可变性，从而增加了MAD并减少了错误地删除特定细胞类型的机会（以降低去除低质量细胞的能力为代价）。
+
+通常，这些假设是合理的，或者它们的违反对下游结论几乎没有影响。尽管如此，在解释结果时记住它们还是有帮助的。
+
+##### 考虑实验因素
+
+
+#### 3.3 其它方法
+还有一种过滤策略是基于每个细胞的QC指标来识别高维空间中的异常值; 
+此处我们使用来自 `robustbase` 的函数来量化每个细胞的异常，然后用`isOutlier`来识别异常很高的低质量细胞
+
+```{r}
+stats <- cbind(log10(df$sum), log10(df$detected),
+    df$subsets_Mito_percent, df$altexps_ERCC_percent)
+
+library(robustbase)
+outlying <- adjOutlyingness(stats, only.outlyingness = TRUE)
+multi.outlier <- isOutlier(outlying, type = "higher")
+summary(multi.outlier)
+```
+
+这种方法和相关方法（例如基于PCA的离群值检测和支持向量机）可以提供更高的能力，以区分低质量的信元与高质量的对应物（Ilicic等，2016），因为它们可以利用许多QC指标中的模式。但是，这需要付出一些可解释性的代价，因为删除给定单元格的原因可能并不总是很明显。
+
+为了完整起见，我们注意到也可以从基因表达谱而非质量控制指标中识别异常值。但是我们认为这是一种冒险的策略，因为它可以去除稀有种群中的高质量细胞
+
+#### 3.4 用图形展示质控指标的分布
+优良作法是检查质量控制指标的分布（图6.2），以发现可能的问题。在最理想的情况下，我们将看到正态分布，这证明了离群值检测中使用的3 MAD阈值是合理的。很大一部分细胞处于另一种模式，这表明QC指标可能与某种生物学状态相关，可能导致过滤过程中不同细胞类型的损失。或细胞亚群的文库制备存在不一致，这在基于板的实验方案中并不罕见。然后，可以快速识别出任何指标的系统性差的批次，以进行进一步的故障排除或彻底删除，就像上面的图6.1一样
+```{r}
+colData(sce.416b) <- cbind(colData(sce.416b), df)
+sce.416b$block <- factor(sce.416b$block)
+sce.416b$phenotype <- ifelse(grepl("induced", sce.416b$phenotype),
+    "induced", "wild type")
+sce.416b$discard <- reasons$discard
+
+gridExtra::grid.arrange(
+    plotColData(sce.416b, x="block", y="sum", colour_by="discard",
+        other_fields="phenotype") + facet_wrap(~phenotype) + 
+        scale_y_log10() + ggtitle("Total count"),
+    plotColData(sce.416b, x="block", y="detected", colour_by="discard", 
+        other_fields="phenotype") + facet_wrap(~phenotype) + 
+        scale_y_log10() + ggtitle("Detected features"),
+    plotColData(sce.416b, x="block", y="subsets_Mito_percent", 
+        colour_by="discard", other_fields="phenotype") + 
+        facet_wrap(~phenotype) + ggtitle("Mito percent"),
+    plotColData(sce.416b, x="block", y="altexps_ERCC_percent", 
+        colour_by="discard", other_fields="phenotype") + 
+        facet_wrap(~phenotype) + ggtitle("ERCC percent"),
+    ncol=1
+)
+
+```
+
+另一个有用的诊断方法是针对其他一些QC指标绘制线粒体计数比例。目的是确认没有总计数和线粒体计数都很高的细胞，以确保我们不会无意间去除代谢活跃的高质量细胞（例如肝细胞）。我们展示了使用来自涉及小鼠脑的更大实验的数据（Zeisel等，2015） ; 在这种情况下，我们在图6.3的右上角没有观察到任何可能与代谢活跃且未受损的细胞相对应的点
+
+这里省略
+
+
+## Drop-let数据的质控(10x genomics)
+
+还没学到10 genomics呢, 这里也暂时省略
+

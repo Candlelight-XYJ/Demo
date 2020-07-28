@@ -80,11 +80,13 @@ sce
 
 ## 2- SCE类对象在单细胞领域特有slot
 
+使用`runXX()`的函数执行降维算法(PCA, T-SNE等)
+
 #### reducedDims 存储单细胞数据的降维结果
 `reducedDims` 是个list,可以存储多个降维结果
 
 ```{r}
-assay(sce,"logcounts") <- scater::normalizeCounts(assay(sce,"counts"),size_factors=librarySizeFactors(assay(sce,"counts")))
+assay(sce,"logcounts") <- scater::normalizeCounts(assay(sce,"counts"),size_factors=scater::librarySizeFactors(assay(sce,"counts")))
 
 ## PCA
 sce <- scater::runPCA(sce)
@@ -109,20 +111,42 @@ reducedDim(sce, "UMAP_uwot")
 
 
 ## Quick start
+![](./mdFigures/Workflow.png)
 
 使用数据集(来自scRNAseq包)展示一个快速处理SC数据的示例
 
 ```{r}
 library(scRNAseq)
-data(fluidigm)
-
+#data(fluidigm)
+sce <- MacoskoRetinaData()
 
 ## 1-质量控制
-#library(scater)
-#is.mito <- grepl("^MT-",rownames(sce))
-#qcstats <- perCellQCMetrics(sce, subsets=list(Mito=is.mito))
-#filtered <- quickPerCellQC(qcstats, percent_subsets="subsets_Mito_percent")
-#sce <- sce[,!filtered$discard]
+library(scater)
+is.mito <- grepl("^MT-",rownames(sce)) ##去除线粒体的reads的行
+qcstats <- perCellQCMetrics(sce, subsets=list(Mito=is.mito)) ##去除线粒体的reads的行
+filtered <- quickPerCellQC(qcstats, percent_subsets="subsets_Mito_percent")
+sce <- sce[,!filtered$discard]
+
+## 2-数据标准化
+sce <- logNormCounts(sce)
+
+## 3-Feature选择
+library(scran)
+dec <- modelGeneVar(sce)
+hvg <- getTopHVGs(dec, prop=0.1) ##获取高变异的基因
+
+## 4-降维
+set.seed(1234)
+sce <- runPCA(sce, ncomponents=25, subset_row=hvg)
+sce <- runUMAP(sce, dimred = 'PCA', external_neighbors=TRUE)
+
+## 5-聚类
+g <- buildSNNGraph(sce, use.dimred = 'PCA')
+colLabels(sce) <- factor(igraph::cluster_louvain(g)$membership)
+
+## 6-可视化
+plotUMAP(sce, colour_by="label")
+
 
 ```
 
