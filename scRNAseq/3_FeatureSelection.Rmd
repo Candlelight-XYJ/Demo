@@ -1,0 +1,174 @@
+---
+title: "3-FeatureSelection"
+author: "yujia"
+date: "2020年7月29日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. 简介
+特征选择最简单的方法是根据其在细胞群体中的表达情况来选择最易变的基因。这假设真正的生物差异将表现为受影响基因中增加的变异，而其他基因只受技术噪音或“无趣”生物变异基线水平(例如，转录破裂)的影响。有几种方法可用来量化每个基因的变异，并选择一组适当的高度可变基因(HVGs)。我们将在下面使用demonst的10X PBMC数据集来讨论这些问题
+
+```{r}
+library(BiocFileCache)
+bfc <- BiocFileCache("raw_data", ask = FALSE)
+raw.path <- bfcrpath(bfc, file.path("http://cf.10xgenomics.com/samples",
+    "cell-exp/2.1.0/pbmc4k/pbmc4k_raw_gene_bc_matrices.tar.gz"))
+untar(raw.path, exdir=file.path(tempdir(), "pbmc4k"))
+
+library(DropletUtils)
+fname <- file.path(tempdir(), "pbmc4k/raw_gene_bc_matrices/GRCh38")
+sce.pbmc <- read10xCounts(fname, col.names=TRUE)
+
+#--- gene-annotation ---#
+library(scater)
+rownames(sce.pbmc) <- uniquifyFeatureNames(
+    rowData(sce.pbmc)$ID, rowData(sce.pbmc)$Symbol)
+
+library(EnsDb.Hsapiens.v86)
+location <- mapIds(EnsDb.Hsapiens.v86, keys=rowData(sce.pbmc)$ID, 
+    column="SEQNAME", keytype="GENEID")
+
+#--- cell-detection ---#
+set.seed(100)
+e.out <- emptyDrops(counts(sce.pbmc))
+sce.pbmc <- sce.pbmc[,which(e.out$FDR <= 0.001)]
+
+#--- quality-control ---#
+stats <- perCellQCMetrics(sce.pbmc, subsets=list(Mito=which(location=="MT")))
+high.mito <- isOutlier(stats$subsets_Mito_percent, type="higher")
+sce.pbmc <- sce.pbmc[,!high.mito]
+
+#--- normalization ---#
+library(scran)
+set.seed(1000)
+clusters <- quickCluster(sce.pbmc)
+sce.pbmc <- computeSumFactors(sce.pbmc, cluster=clusters)
+sce.pbmc <- logNormCounts(sce.pbmc)
+
+```
+
+## 2. 量化每个基因的变异
+
+#### 2.1 log-counts的差异
+量化每个基因变异的最简单方法是简单计算细胞群体中所有细胞中每个基因的对数标准化表达值（为简单起见，称为“对数计数”）的方差. 这样做的优点是 feature selection用的 Log值和后续分析用的log值保持一致.
+
+特别是，对数值差异最大的基因对细胞间的欧几里得距离贡献最大。通过在这里使用对数值，我们确保了我们对异质性的定量定义在整个分析过程中是一致的。
+
+每个基因方差的计算是简单的，但特征选择需要对均值-方差关系建模。正如在第7.5.1节中简要讨论的，对数转换不能实现完美的方差稳定，这意味着基因的方差更多地是由其abundance而不是其潜在的生物异质性驱动的。为了解释这种影响，我们使用`modelGeneVar()`函数来拟合与所有基因丰度相关的方差的趋势
+
+```{r}
+library(scran)
+dec.pbmc <- modelGeneVar(sce.pbmc)
+
+# Visualizing the fit:
+fit.pbmc <- metadata(dec.pbmc)
+plot(fit.pbmc$mean, fit.pbmc$var, xlab="Mean of log-expression",
+    ylab="Variance of log-expression")
+curve(fit.pbmc$trend(x), col="dodgerblue", add=TRUE, lwd=2)
+
+# Ordering by most interesting genes for inspection.
+dec.pbmc[order(dec.pbmc$bio, decreasing=TRUE),] 
+```
+
+在任何给定的abundance下，我们假设大多数基因的表达谱是由随机的技术噪声控制的(详见8.2.3节); 基于这种假设，我们的趋势代表了技术噪声作为丰度函数的估计值。然后我们把每个基因的总变异分解成技术成分，基因丰度时趋势的拟合值;生物成分，定义为总方差和技术成分之间的差。这一生物成分代表了每个基因的“有趣”变异，可以用作HVG选择的度量。
+
+
+#### 2.2 变异系数
+
+
+
+## 3. 选择高变异的基因
+一旦我们量化了每个基因的变异，下一步就是选择要在下游分析中使用的HVG子集。较大的子集将通过保留更多潜在相关的基因来降低丢弃有趣的生物信号的风险，但代价是增加了可能使信号模糊的不相关基因的噪音。很难确定任何给定应用的最佳折衷方案，因为一个环境中的噪声可能是另一环境中的有用信号。例如，T细胞活化反应中的异质性是一个有趣的现象（Richard等人2018）但在只关心区分主要免疫表型的研究中可能是无关紧要的。就是说，有几种常规策略通常用于指导HVG选择，我们将在这里讨论
+
+#### 3.1 基于最大metrics
+最简单的选择HVG的策略是依据变异指标来选出排名前X位的基因; 这种方法的主要优点是用户可以直接控制保留的基因数量，这就保证了下游计算的计算复杂度很容易预测。
+
+
+
+#### 3.2 基于显著性
+另外一种feature选择的方法是对指标设定一个固定阈值, 这通常用矫正后的p值来卡阈值.
+
+```{r}
+hvg.pbmc.var.2 <- getTopHVGs(dec.pbmc, fdr.threshold=0.05)
+length(hvg.pbmc.var.2)
+```
+
+
+
+
+#### 3.3 Keeping all genes above the trend
+这里的目的是只去除明显无趣且差异低于趋势的基因
+
+
+#### 3.4 根据个人情况选择先验基因
+一种钝但有效的特征选择策略是使用预先定义的有趣基因集。目的是将重点放在使用非监督方法进行HVG选择时可能被其他因素掩盖的生物异质性的特定方面。一个示例应用在于解剖细胞命运承诺的最早阶段中的转录变化（Messmer等人，2019年），相对于其他途径的活动（例如，细胞周期，代谢）而言，这可能是适度的。的确，如果我们的目的是表明给定途径中没有有意义的异质性，则我们至少有义务仅使用该途径中的基因来重复我们的分析，以最大程度地检测这种异质性。
+
+以这种方式使用scRNA-seq数据在概念上等效于荧光激活细胞分选（FACS）实验，并具有能够随时（重新）定义目标特征的便利性。例如，在PBMC数据集中，我们可能会使用MSigDB的一些C7免疫学特征（Godec等人2016）来提高各种T细胞亚型的分辨率。我们强调，以这种方式利用现有的生物学知识来解决特定的假设是没有可耻的。我们之所以这样说，是因为基因组学的一个普遍限制是数据分析应“无偏见”，即没有任何生物学先入之见。从头开始尝试获取生物学见解这是令人钦佩的，但是这种“偏见”已经存在于每个阶段，从实验设计开始（为什么我们首先对这个细胞群感兴趣？）一直持续到标记基因的解释（第11节）。
+
+```{r}
+library(msigdbr)
+c7.sets <- msigdbr(species = "Homo sapiens", category = "C7")
+head(unique(c7.sets$gs_name))
+
+# Using the Goldrath sets to distinguish CD8 subtypes
+cd8.sets <- c7.sets[grep("GOLDRATH", c7.sets$gs_name),]
+cd8.genes <- rowData(sce.pbmc)$Symbol %in% cd8.sets$human_gene_symbol
+summary(cd8.genes)
+
+# Using GSE11924 to distinguish between T helper subtypes
+th.sets <- c7.sets[grep("GSE11924", c7.sets$gs_name),]
+th.genes <- rowData(sce.pbmc)$Symbol %in% th.sets$human_gene_symbol
+summary(th.genes)
+
+# Using GSE11961 to distinguish between B cell subtypes
+b.sets <- c7.sets[grep("GSE11961", c7.sets$gs_name),]
+b.genes <- rowData(sce.pbmc)$Symbol %in% b.sets$human_gene_symbol
+summary(b.genes)
+```
+
+当然，专注于预定义基因的不利之处在于它将限制我们检测变异的新颖或意外方面的能力。因此，这种有重点的分析应补充（而不是替代）先前讨论的无监督特征选择策略。
+
+或者，我们也可以颠倒这种推理，以在下游分析之前去除不太可能感兴趣的基因，从而避免干扰下游解释的有害变异。常见的去除候选基因包括核糖体蛋白基因或线粒体基因；对于免疫细胞亚群，我们可能也倾向于去除免疫球蛋白基因和T细胞受体基因，其中克隆表达会引入（可能不相关的）种群结构。
+
+
+```{r}
+# Identifying ribosomal proteins:
+ribo.discard <- grepl("^RP[SL]\\d+", rownames(sce.pbmc))
+sum(ribo.discard)
+# A more curated approach for identifying ribosomal protein genes:
+c2.sets <- msigdbr(species = "Homo sapiens", category = "C2")
+ribo.set <- c2.sets[c2.sets$gs_name=="KEGG_RIBOSOME",]$human_gene_symbol
+ribo.discard <- rownames(sce.pbmc) %in% ribo.set
+sum(ribo.discard)
+
+library(AnnotationHub)
+edb <- AnnotationHub()[["AH73881"]]
+anno <- select(edb, keys=rowData(sce.pbmc)$ID, keytype="GENEID", 
+    columns="TXBIOTYPE")
+
+# Removing immunoglobulin variable chains:
+igv.set <- anno$GENEID[anno$TXBIOTYPE %in% c("IG_V_gene", "IG_V_pseudogene")]
+igv.discard <- rowData(sce.pbmc)$ID %in% igv.set
+sum(igv.discard)
+
+# Removing TCR variable chains:
+tcr.set <- anno$GENEID[anno$TXBIOTYPE %in% c("TR_V_gene", "TR_V_pseudogene")]
+tcr.discard <- rowData(sce.pbmc)$ID %in% tcr.set
+sum(tcr.discard)
+```
+
+在实践中尽量不提前过滤这些基因, 除非进一步分析显示他们是有问题的
+
+
+#### 3.5 将以上方法合并在一起
+下面的几行代码将选出生物成分最高的前10%的基因
+```{r}
+dec.pbmc <- modelGeneVar(sce.pbmc)
+chosen <- getTopHVGs(dec.pbmc, prop=0.1)
+str(chosen)
+
+```
